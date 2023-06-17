@@ -24,7 +24,7 @@ const Home: React.FC = () => {
 
 					try {
 						// Send the recorded data to the server using Axios
-						await axios.post("https://localhost:5000/api/upload", formData);
+						await axios.post("http://localhost:5000/api/upload", formData);
 
 						console.log("Recorded sound uploaded successfully");
 					} catch (error) {
