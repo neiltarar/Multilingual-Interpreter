@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { useEffect } from "react";
 import Layout from "../Layout";
 import Button from "@mui/material/Button";
+import LogoutButton from "../Auth/LogoutButton";
 import axios from "axios";
 import { useAuth } from "../../contexts/AuthContext";
 
@@ -69,6 +70,7 @@ const Home: React.FC = () => {
 
 	return (
 		<Layout>
+			<LogoutButton />
 			<h1>Home Page</h1>
 			<Button
 				variant='contained'
