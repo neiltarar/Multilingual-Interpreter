@@ -1,10 +1,33 @@
 import React, { useRef } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { useEffect } from "react";
 import Layout from "../Layout";
 import Button from "@mui/material/Button";
+import LogoutButton from "../Auth/LogoutButton";
 import axios from "axios";
+import { useAuth } from "../../contexts/AuthContext";
+
+const API_URL =
+	process.env.NODE_ENV === "production"
+		? process.env.REACT_APP_API_URL_DEPLOY
+		: process.env.REACT_APP_API_URL_DEV;
+
+interface Props {
+	currentUser: { user: { name: string; id: number } };
+}
 
 const Home: React.FC = () => {
 	const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+	const navigate = useNavigate();
+	const location = useLocation();
+	// @ts-ignore
+	const { currentUser, beers, fetchBeers } = useAuth();
+
+	useEffect(() => {
+		if (!currentUser) {
+			navigate("/signin");
+		}
+	}, [currentUser, navigate]);
 
 	const handleButtonPress = async () => {
 		try {
@@ -24,7 +47,7 @@ const Home: React.FC = () => {
 
 					try {
 						// Send the recorded data to the server using Axios
-						await axios.post("https://localhost:5000/api/upload", formData);
+						await axios.post("http://localhost:5000/api/upload", formData);
 
 						console.log("Recorded sound uploaded successfully");
 					} catch (error) {
@@ -47,6 +70,7 @@ const Home: React.FC = () => {
 
 	return (
 		<Layout>
+			<LogoutButton />
 			<h1>Home Page</h1>
 			<Button
 				variant='contained'
