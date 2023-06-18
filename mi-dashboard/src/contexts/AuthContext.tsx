@@ -25,6 +25,7 @@ export const AuthProvider = ({ children }) => {
 
 	// @ts-ignore
 	const signup = async (values) => {
+		console.log("values: ", values);
 		try {
 			const response = await axios.post(`${API_URL}/users/signup`, values, {
 				withCredentials: true,

@@ -1,10 +1,32 @@
 import React, { useRef } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { useEffect } from "react";
 import Layout from "../Layout";
 import Button from "@mui/material/Button";
 import axios from "axios";
+import { useAuth } from "../../contexts/AuthContext";
+
+const API_URL =
+	process.env.NODE_ENV === "production"
+		? process.env.REACT_APP_API_URL_DEPLOY
+		: process.env.REACT_APP_API_URL_DEV;
+
+interface Props {
+	currentUser: { user: { name: string; id: number } };
+}
 
 const Home: React.FC = () => {
 	const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+	const navigate = useNavigate();
+	const location = useLocation();
+	// @ts-ignore
+	const { currentUser, beers, fetchBeers } = useAuth();
+
+	useEffect(() => {
+		if (!currentUser) {
+			navigate("/signin");
+		}
+	}, [currentUser, navigate]);
 
 	const handleButtonPress = async () => {
 		try {

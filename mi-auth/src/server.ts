@@ -2,12 +2,17 @@ import express from "express";
 import dotenv from "dotenv";
 import userRoutes from "./routes/userRoutes";
 import path from "path";
+import cors from "cors";
+import cookieParser from "cookie-parser";
 import { authenticateToken } from "./middlewares/authMiddleware";
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.AUTH_API_PORT;
+
+app.use(cors({ origin: "http://localhost:3000", credentials: true }));
+app.use(cookieParser());
 
 app.use(express.json()); // for parsing application/json
 app.use(express.static(path.join(__dirname, "build")));

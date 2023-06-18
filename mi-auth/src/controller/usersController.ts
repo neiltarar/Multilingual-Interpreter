@@ -23,7 +23,12 @@ export const signup = async (req: any, res: any): Promise<any> => {
 
 	const passwordHash = await bcrypt.hash(password, 11);
 	try {
-		const result = await createNewUser(user);
+		const result = await createNewUser({
+			firstName,
+			lastName,
+			email,
+			passwordHash,
+		});
 
 		if (!result) {
 			return res.status(409).json({ message: "User already exists" });

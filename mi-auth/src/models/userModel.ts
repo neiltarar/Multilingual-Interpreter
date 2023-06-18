@@ -1,11 +1,22 @@
 import db from "../db/db";
-import { UserDto } from "../types/dto/UserDto";
 
-export const createNewUser = async (user: UserDto): Promise<any> => {
+interface createUserProps {
+	firstName: string;
+	lastName: string;
+	email: string;
+	passwordHash: string;
+}
+
+export const createNewUser = async ({
+	firstName,
+	lastName,
+	email,
+	passwordHash,
+}: createUserProps): Promise<any> => {
 	try {
 		const result = await db(
 			"INSERT INTO users (first_name, last_name, email, password_hash) VALUES ($1, $2, $3, $4) RETURNING email",
-			[user.firstName, user.lastName, user.email, user.passwordHash]
+			[firstName, lastName, email, passwordHash]
 		);
 		return result;
 	} catch (error: any) {

@@ -81,7 +81,6 @@ export default function SignUp() {
 		values: MyFormValues,
 		{ setSubmitting }: { setSubmitting: (isSubmitting: boolean) => void }
 	) => {
-		console.log("here");
 		signup(values)
 			.then((response: any) => {
 				if (response.status !== 200) {
