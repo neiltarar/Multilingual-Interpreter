@@ -1,5 +1,5 @@
 import bcrypt from "bcrypt";
-import { createNewUser } from "../models/userModel";
+import { user as userModels } from "../models/userModel";
 import { isMatchingPasswords, isValidEmail } from "../utils/validators";
 import { UserDto } from "../types/dto/UserDto";
 import dotenv from "dotenv";
@@ -23,7 +23,7 @@ export const signup = async (req: any, res: any): Promise<any> => {
 
 	const passwordHash = await bcrypt.hash(password, 11);
 	try {
-		const result = await createNewUser({
+		const result = await userModels.createNewUser({
 			firstName,
 			lastName,
 			email,
@@ -36,6 +36,7 @@ export const signup = async (req: any, res: any): Promise<any> => {
 
 		return res.status(200).json({
 			message: "Successfully created a user.",
+			//@ts-ignore
 			email: result[0]["email"],
 		});
 	} catch (error) {
