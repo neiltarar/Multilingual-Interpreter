@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import Layout from "../Layout";
 import Button from "@mui/material/Button";
 import LogoutButton from "../Auth/LogoutButton";
-import axios from "axios";
+import { useVoice } from "../../contexts/VoiceContext";
 import { useAuth } from "../../contexts/AuthContext";
 
 const API_URL =
@@ -17,61 +17,27 @@ interface Props {
 }
 
 const Home: React.FC = () => {
-	const mediaRecorderRef = useRef<MediaRecorder | null>(null);
 	const navigate = useNavigate();
-	const location = useLocation();
+
+	const {
+		//@ts-ignore
+		transcription,
+		//@ts-ignore
+		setTranscription,
+		//@ts-ignore
+		handleButtonPress,
+		//@ts-ignore
+		handleButtonRelease,
+	} = useVoice();
+
 	// @ts-ignore
-	const { currentUser, beers, fetchBeers } = useAuth();
+	const { currentUser } = useAuth();
 
 	useEffect(() => {
 		if (!currentUser) {
 			navigate("/signin");
 		}
 	}, [currentUser, navigate]);
-
-	const handleButtonPress = async () => {
-		try {
-			const mediaStream = await navigator.mediaDevices.getUserMedia({
-				audio: true,
-			});
-			mediaRecorderRef.current = new MediaRecorder(mediaStream);
-
-			mediaRecorderRef.current.addEventListener(
-				"dataavailable",
-				async (event) => {
-					const recordedData = event.data;
-
-					// Create a FormData object to send the recorded data to the server
-					const formData = new FormData();
-					formData.append("recordedSound", recordedData, "recorded-sound.wav");
-
-					try {
-						// Send the recorded data to the server using Axios
-						await axios
-							.post("http://localhost:5000/api/upload", formData)
-							.then((res) => {
-								console.log(res.data.message);
-							})
-							.catch((err) => console.error(err));
-
-						console.log("Recorded sound uploaded successfully");
-					} catch (error) {
-						console.error("Error uploading recorded sound:", error);
-					}
-				}
-			);
-
-			mediaRecorderRef.current.start();
-		} catch (error) {
-			console.error("Error accessing microphone:", error);
-		}
-	};
-
-	const handleButtonRelease = () => {
-		if (mediaRecorderRef.current) {
-			mediaRecorderRef.current.stop();
-		}
-	};
 
 	return (
 		<Layout>
@@ -87,6 +53,14 @@ const Home: React.FC = () => {
 			>
 				Hold to Record
 			</Button>
+			{transcription ? (
+				<>
+					<h1>Turkish:</h1>
+					<p>{transcription}</p>
+				</>
+			) : (
+				<></>
+			)}
 		</Layout>
 	);
 };

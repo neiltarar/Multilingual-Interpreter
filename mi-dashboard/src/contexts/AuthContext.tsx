@@ -1,8 +1,11 @@
 import { createContext, useContext, useState } from "react";
 import axios from "axios";
 
-// @ts-ignore
-const AuthContext = createContext();
+interface AuthContextType {
+	//TODO define the authcontext
+}
+
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
 const API_URL =
 	process.env.NODE_ENV === "production"
 		? process.env.REACT_APP_API_URL_DEPLOY
@@ -12,8 +15,9 @@ export const useAuth = () => {
 	return useContext(AuthContext);
 };
 
-// @ts-ignore
-export const AuthProvider = ({ children }) => {
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
+	children,
+}) => {
 	const [currentUser, setCurrentUser] = useState(() => {
 		const storedUser = localStorage.getItem("currentUser");
 		return storedUser ? JSON.parse(storedUser) : null;
