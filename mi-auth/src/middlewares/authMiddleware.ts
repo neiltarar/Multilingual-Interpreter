@@ -6,8 +6,6 @@ dotenv.config();
 
 //@ts-ignore
 export const authenticateToken = async (req, res, next) => {
-	console.log("here");
-
 	const accessToken = req.cookies.accessToken;
 	const refreshToken = req.cookies.refreshToken;
 	if (accessToken === null) return res.sendStatus(401); // If there's no token, return 401 (Unauthorised)
@@ -51,7 +49,7 @@ export const authenticateToken = async (req, res, next) => {
 						}
 					);
 				} else {
-					return res.sendStatus(403); // If the token is not valid, return 403 (Forbidden)
+					return res.status(403).redirect("/"); // If the token is not valid, return 403 (Forbidden)
 				}
 			} else {
 				req.user = user; // adding the authenticated user's info extracted from the cookie to req

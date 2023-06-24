@@ -9,22 +9,23 @@ import { authenticateToken } from "./middlewares/authMiddleware";
 
 dotenv.config();
 
-const app = express();
 const PORT = process.env.AUTH_API_PORT;
 
-app.use(cors({ origin: "http://localhost:3000", credentials: true }));
-app.use(cookieParser());
+const app = express();
+process.env.NODE_ENV === "development"
+	? app.use(cors({ origin: "http://localhost:3000", credentials: true }))
+	: app.use(cors({ origin: "http://localhost:3001", credentials: true }));
 
+app.use(cookieParser());
 app.use(express.json()); // for parsing application/json
 app.use(express.static(path.join(__dirname, "build")));
 
 app.use("/users", userRoutes);
 app.use("/sessions", sessionRoutes);
 
-app.get("/home", authenticateToken, (req, res) => {
+app.get("*", authenticateToken, (req, res) => {
 	res.sendFile(path.join(__dirname, "build", "index.html"));
 });
-
 app.listen(PORT, () =>
 	console.log(`Server is running on http://localhost:${PORT}`)
 );
