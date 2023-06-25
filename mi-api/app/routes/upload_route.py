@@ -18,7 +18,8 @@ def upload_route():
             with sr.AudioFile(file_path) as source:
                 audio = speech_recogniser.record(source)
                 text = speech_recogniser.recognize_whisper(model="tiny", language="turkish", audio_data=audio)
-                return jsonify({'message':text})
+                return jsonify({"message": "I am sorry I didn't catch what you said\nOzur dilerim ne soyledigini anlayamadim!"})
+                # return jsonify({'message':text})
         except sr.UnknownValueError:
             return jsonify({"message":"Couldn't understand your speech"})
         except sr.RequestError as e:
@@ -26,6 +27,6 @@ def upload_route():
             return jsonify({'message': 'Audio received and processed successfully'})
         except Exception as e:
             print(f"Error as exeption: {e}")
-            return jsonify({"message": "Internal Server Error, check server logs"})
+            return jsonify({"message": "I am sorry I didn't catch what you said\nOzur dilerim ne soyledigini anlayamadim!"})
     else:
         return jsonify({'error': 'No audio file found'})
