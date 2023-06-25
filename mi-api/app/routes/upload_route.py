@@ -17,12 +17,15 @@ def upload_route():
         try:
             with sr.AudioFile(file_path) as source:
                 audio = speech_recogniser.record(source)
-                text = speech_recogniser.recognize_google(audio, language="tr-TR")
+                text = speech_recogniser.recognize_whisper(model="tiny", language="turkish", audio_data=audio)
                 return jsonify({'message':text})
         except sr.UnknownValueError:
             return jsonify({"message":"Couldn't understand your speech"})
         except sr.RequestError as e:
             print(f"Error: {e}")
             return jsonify({'message': 'Audio received and processed successfully'})
+        except Exception as e:
+            print(f"Error as exeption: {e}")
+            return jsonify({"message": "Internal Server Error, check server logs"})
     else:
         return jsonify({'error': 'No audio file found'})
