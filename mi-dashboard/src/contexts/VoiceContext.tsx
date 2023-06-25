@@ -17,8 +17,10 @@ export const VoiceProvider: React.FC<{ children: React.ReactNode }> = ({
 	const mediaRecorderRef = useRef<MediaRecorder | null>(null);
 
 	const [transcription, setTranscription] = useState(null);
+	const [isRecording, setIsRecording] = useState(false);
 
 	const handleButtonPress = async () => {
+		setIsRecording(true);
 		try {
 			const mediaStream = await navigator.mediaDevices.getUserMedia({
 				audio: true,
@@ -62,6 +64,7 @@ export const VoiceProvider: React.FC<{ children: React.ReactNode }> = ({
 		if (mediaRecorderRef.current) {
 			mediaRecorderRef.current.stop();
 		}
+		setIsRecording(false);
 	};
 
 	const value = {
@@ -69,6 +72,7 @@ export const VoiceProvider: React.FC<{ children: React.ReactNode }> = ({
 		setTranscription,
 		handleButtonPress,
 		handleButtonRelease,
+		isRecording,
 	};
 
 	return (
