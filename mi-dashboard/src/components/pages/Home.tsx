@@ -140,7 +140,7 @@ const Home: React.FC = () => {
 						</div>
 					</>
 				) : (
-					<CircularProgress />
+					(transcription || isWaiting) && <CircularProgress />
 				)}
 			</div>
 		</DefaultLayout>
