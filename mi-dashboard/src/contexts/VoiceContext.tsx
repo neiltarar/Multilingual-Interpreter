@@ -18,6 +18,7 @@ export const VoiceProvider: React.FC<{ children: React.ReactNode }> = ({
 
 	const [transcription, setTranscription] = useState(null);
 	const [isRecording, setIsRecording] = useState(false);
+	const [isWaiting, setIsWaiting] = useState(false);
 
 	const handleButtonPress = async (selectedLanguage: string) => {
 		setIsRecording(true);
@@ -37,6 +38,8 @@ export const VoiceProvider: React.FC<{ children: React.ReactNode }> = ({
 					formData.append("recordedSound", recordedData, "recorded-sound.wav");
 					formData.append("selectedLanguage", selectedLanguage);
 
+					setIsWaiting(true);
+
 					try {
 						// Send the recorded data to the server using Axios
 						await axios
@@ -44,12 +47,14 @@ export const VoiceProvider: React.FC<{ children: React.ReactNode }> = ({
 							.then((res) => {
 								const transcriptedSpeech = res.data.message;
 								setTranscription(transcriptedSpeech);
-								console.log(transcriptedSpeech);
+								setIsWaiting(false);
 							})
-							.catch((err) => console.error(err));
-
-						console.log("Recorded sound uploaded successfully");
+							.catch((err) => {
+								setIsWaiting(false);
+								console.error(err);
+							});
 					} catch (error) {
+						setIsWaiting(false);
 						console.error("Error uploading recorded sound:", error);
 					}
 				}
@@ -74,6 +79,7 @@ export const VoiceProvider: React.FC<{ children: React.ReactNode }> = ({
 		handleButtonPress,
 		handleButtonRelease,
 		isRecording,
+		isWaiting,
 	};
 
 	return (
