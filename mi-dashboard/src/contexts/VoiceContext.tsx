@@ -19,7 +19,7 @@ export const VoiceProvider: React.FC<{ children: React.ReactNode }> = ({
 	const [transcription, setTranscription] = useState(null);
 	const [isRecording, setIsRecording] = useState(false);
 
-	const handleButtonPress = async () => {
+	const handleButtonPress = async (selectedLanguage: string) => {
 		setIsRecording(true);
 		try {
 			const mediaStream = await navigator.mediaDevices.getUserMedia({
@@ -35,6 +35,7 @@ export const VoiceProvider: React.FC<{ children: React.ReactNode }> = ({
 					// Create a FormData object to send the recorded data to the server
 					const formData = new FormData();
 					formData.append("recordedSound", recordedData, "recorded-sound.wav");
+					formData.append("selectedLanguage", selectedLanguage);
 
 					try {
 						// Send the recorded data to the server using Axios
