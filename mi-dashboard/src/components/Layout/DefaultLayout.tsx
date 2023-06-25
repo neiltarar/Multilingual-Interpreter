@@ -12,13 +12,14 @@ const DefaultLayout: React.FC<DefaultLayoutProps> = ({ children }) => {
 		<ThemeProvider theme={myTheme}>
 			<Box
 				sx={{
-					mt: 4,
+					mt: 1,
 					display: "flex",
 					flexDirection: "column",
 					alignItems: "center",
 					justifyContent: "center",
 					textAlign: "center",
-					minHeight: "100vh",
+					minHeight: "80vh",
+					minWidth: "200px",
 					bgcolor: myTheme.palette.common.white,
 					color: myTheme.palette.primary.main,
 				}}

@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify
 from utils.audio_utils import process_audio_file
 from utils.word_splitter import add_newline_every_20_words
+from services.openai_service import translation
 import speech_recognition as sr
 
 upload_bp = Blueprint('upload_bp', __name__)  # Creating a Blueprint
@@ -20,11 +21,15 @@ def upload_route():
         try:
             with sr.AudioFile(file_path) as source:
                 audio = speech_recogniser.record(source)
-                text = speech_recogniser.recognize_whisper(model="tiny", language=selected_language, audio_data=audio)
+                text = speech_recogniser.recognize_whisper(model="base", language=selected_language, audio_data=audio)
                 if(len(text.split()) > 20):
                     new_text = add_newline_every_20_words(text)
                     return jsonify({"message": new_text})
-                return jsonify({'message':text})
+                translated_text_object = translation('English', 'Turkish', text)
+                translated_text = translated_text_object.choices[0].text.strip() 
+
+                # print(translated_text)
+                return jsonify({'message':f'Original: {text}\ntranslation: {translated_text}'})
         except sr.UnknownValueError:
             return jsonify({"message":"Couldn't understand your speech"})
         except sr.RequestError as e:

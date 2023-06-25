@@ -69,6 +69,8 @@ export const signin = async (req, res) => {
 		} else {
 			res.status(400).json({ message: "Unauthorised" });
 		}
+	} else {
+		res.status(400).json({ message: "Unauthorised" });
 	}
 };
 

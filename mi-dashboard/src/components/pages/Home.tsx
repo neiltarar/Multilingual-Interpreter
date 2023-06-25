@@ -2,6 +2,8 @@ import React, { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import Button from "@mui/material/Button";
+import Box from "@mui/material/Box";
+import CircularProgress from "@mui/material/CircularProgress";
 import LogoutButton from "../Auth/LogoutButton";
 import { useVoice } from "../../contexts/VoiceContext";
 import { useAuth } from "../../contexts/AuthContext";
@@ -19,7 +21,8 @@ interface Props {
 
 const Home: React.FC = () => {
 	const navigate = useNavigate();
-	const [selectedLanguage, setSelectedLanguage] = useState("English");
+	const [selectedLanguage, setSelectedLanguage] = useState("english");
+	const [selectedFeature, setSelectedFeature] = useState("transcribe");
 
 	const {
 		//@ts-ignore
@@ -30,6 +33,8 @@ const Home: React.FC = () => {
 		handleButtonPress,
 		//@ts-ignore
 		handleButtonRelease,
+		//@ts-ignore
+		isWaiting,
 	} = useVoice();
 
 	// @ts-ignore
@@ -47,16 +52,28 @@ const Home: React.FC = () => {
 			<div
 				style={{
 					height: "100%",
-					marginTop: "6rem",
+					marginTop: "4rem",
 					position: "relative",
 					display: "inline-block",
 				}}
 			>
+				<div style={{ margin: "0 0 3rem 0" }}>
+					<select
+						value={selectedFeature}
+						onChange={(e) => setSelectedFeature(e.target.value)}
+					>
+						<option value='transcribe'>Transcript</option>
+						<option value='translate'>Translate</option>
+					</select>
+				</div>
 				<Button
 					variant='contained'
 					color='primary'
 					onMouseDown={() => handleButtonPress(selectedLanguage)}
 					onMouseUp={() => handleButtonRelease()}
+					onTouchStart={() => handleButtonPress(selectedLanguage)}
+					onTouchEnd={() => handleButtonRelease()}
+					onTouchCancel={() => handleButtonRelease()}
 					sx={{
 						borderRadius: "50%",
 						height: "80px",
@@ -66,15 +83,37 @@ const Home: React.FC = () => {
 				>
 					Hold to translate
 				</Button>
-				<div style={{ margin: "1.5rem 0 1.5rem " }}>
-					<select
-						value={selectedLanguage}
-						onChange={(e) => setSelectedLanguage(e.target.value)}
+				{selectedFeature === "transcribe" ? (
+					<div style={{ margin: "1.5rem 0 1.5rem " }}>
+						<select
+							value={selectedLanguage}
+							onChange={(e) => setSelectedLanguage(e.target.value)}
+						>
+							<option value='English'>English</option>
+							<option value='Turkish'>Türkçe</option>
+						</select>
+					</div>
+				) : (
+					<div
+						style={{ display: "flex", gap: "2rem", margin: "1.5rem 0 1.5rem " }}
 					>
-						<option value='English'>English</option>
-						<option value='Turkish'>Türkçe</option>
-					</select>
-				</div>
+						<select
+							value={selectedLanguage}
+							onChange={(e) => setSelectedLanguage(e.target.value)}
+						>
+							<option value='English'>English</option>
+							<option value='Turkish'>Türkçe</option>
+						</select>
+						<select
+							value={selectedLanguage}
+							onChange={(e) => setSelectedLanguage(e.target.value)}
+						>
+							<option value='English'>English</option>
+							<option value='Turkish'>Türkçe</option>
+						</select>
+					</div>
+				)}
+
 				{isRecording && (
 					<img
 						src={soundWaveGif}
@@ -82,24 +121,26 @@ const Home: React.FC = () => {
 						style={{
 							position: "absolute",
 							bottom: "100%",
-							height: "70%",
-							width: "200%",
-							left: "-50%",
-							marginBottom: "20px",
+							height: "40%",
+							width: "300%",
+							left: "-100%",
+							marginBottom: "0.8rem",
 						}}
 					/>
 				)}
 
-				{transcription && (
+				{transcription && !isWaiting ? (
 					<>
 						<div style={{ position: "absolute", width: "400%", left: "-150%" }}>
 							{transcription
 								.split("\n")
 								.map((sentence: string, index: number) => (
-									<p>{sentence}</p>
+									<p key={index}>{sentence}</p>
 								))}
 						</div>
 					</>
+				) : (
+					<CircularProgress />
 				)}
 			</div>
 		</DefaultLayout>
