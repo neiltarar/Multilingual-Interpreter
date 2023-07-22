@@ -22,6 +22,7 @@ interface Props {
 const Home: React.FC = () => {
 	const navigate = useNavigate();
 	const [selectedLanguage, setSelectedLanguage] = useState("english");
+	const [selectedLanguage2, setSelectedLanguage2] = useState("english");
 	const [selectedFeature, setSelectedFeature] = useState("transcribe");
 
 	const {
@@ -40,11 +41,11 @@ const Home: React.FC = () => {
 	// @ts-ignore
 	const { currentUser } = useAuth();
 
-	useEffect(() => {
-		if (!currentUser) {
-			navigate("/signin");
-		}
-	}, [currentUser, navigate]);
+	// useEffect(() => {
+	// 	if (!currentUser) {
+	// 		navigate("/signin");
+	// 	}
+	// }, [currentUser, navigate]);
 
 	return (
 		<DefaultLayout>
@@ -69,11 +70,23 @@ const Home: React.FC = () => {
 				<Button
 					variant='contained'
 					color='primary'
-					onMouseDown={() => handleButtonPress(selectedLanguage)}
+					onMouseDown={() =>
+						handleButtonPress(
+							selectedLanguage,
+							selectedLanguage2,
+							selectedFeature
+						)
+					}
 					onMouseUp={() => handleButtonRelease()}
-					onTouchStart={() => handleButtonPress(selectedLanguage)}
+					onTouchStart={() =>
+						handleButtonPress(
+							selectedLanguage,
+							selectedLanguage2,
+							selectedFeature
+						)
+					}
 					onTouchEnd={() => handleButtonRelease()}
-					onTouchCancel={() => handleButtonRelease()}
+					// onTouchCancel={() => handleButtonRelease()}
 					sx={{
 						borderRadius: "50%",
 						height: "80px",
@@ -105,8 +118,8 @@ const Home: React.FC = () => {
 							<option value='Turkish'>Türkçe</option>
 						</select>
 						<select
-							value={selectedLanguage}
-							onChange={(e) => setSelectedLanguage(e.target.value)}
+							value={selectedLanguage2}
+							onChange={(e) => setSelectedLanguage2(e.target.value)}
 						>
 							<option value='English'>English</option>
 							<option value='Turkish'>Türkçe</option>

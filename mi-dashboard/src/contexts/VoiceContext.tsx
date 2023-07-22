@@ -20,7 +20,11 @@ export const VoiceProvider: React.FC<{ children: React.ReactNode }> = ({
 	const [isRecording, setIsRecording] = useState(false);
 	const [isWaiting, setIsWaiting] = useState(false);
 
-	const handleButtonPress = async (selectedLanguage: string) => {
+	const handleButtonPress = async (
+		selectedLanguage: string,
+		selectedLanguage2: string,
+		selectedFeature: string
+	) => {
 		setIsRecording(true);
 		try {
 			const mediaStream = await navigator.mediaDevices.getUserMedia({
@@ -37,6 +41,8 @@ export const VoiceProvider: React.FC<{ children: React.ReactNode }> = ({
 					const formData = new FormData();
 					formData.append("recordedSound", recordedData, "recorded-sound.wav");
 					formData.append("selectedLanguage", selectedLanguage);
+					formData.append("selectedLanguage2", selectedLanguage2);
+					formData.append("selectedFeature", selectedFeature);
 
 					setIsWaiting(true);
 
