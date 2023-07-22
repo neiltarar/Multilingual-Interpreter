@@ -31,7 +31,7 @@ def upload_route():
                     print('transcription has been sent')
                     return jsonify({"message": text})
                 
-                translated_text_object = translation('English', 'Turkish', text)
+                translated_text_object = translation(selected_language, selected_language2, text)
                 translated_text = translated_text_object.choices[0].text.strip() 
                 print('translation has been sent')
                 return jsonify({'message':f'Original: {text}\ntranslation: {translated_text}'})
