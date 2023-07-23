@@ -53,7 +53,7 @@ export const signin = async (req, res) => {
 				res.status(200).json({
 					message: "Successful Login",
 					//@ts-ignore
-					user: { name: user.first_name, id: user.id },
+					user: { name: user.first_name },
 				});
 			} else {
 				console.log("Error: Couldn't save the refresh token");
