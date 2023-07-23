@@ -22,7 +22,10 @@ interface Props {
 const Home: React.FC = () => {
 	const navigate = useNavigate();
 	const [selectedLanguage, setSelectedLanguage] = useState("english");
+	const [selectedLanguage2, setSelectedLanguage2] = useState("english");
 	const [selectedFeature, setSelectedFeature] = useState("transcribe");
+
+	const [testText, setTestText] = useState("test");
 
 	const {
 		//@ts-ignore
@@ -40,15 +43,16 @@ const Home: React.FC = () => {
 	// @ts-ignore
 	const { currentUser } = useAuth();
 
-	useEffect(() => {
-		if (!currentUser) {
-			navigate("/signin");
-		}
-	}, [currentUser, navigate]);
+	// useEffect(() => {
+	// 	if (!currentUser) {
+	// 		navigate("/signin");
+	// 	}
+	// }, [currentUser, navigate]);
 
 	return (
 		<DefaultLayout>
 			<LogoutButton />
+			<p>{testText}</p>
 			<div
 				style={{
 					height: "100%",
@@ -69,11 +73,27 @@ const Home: React.FC = () => {
 				<Button
 					variant='contained'
 					color='primary'
-					onMouseDown={() => handleButtonPress(selectedLanguage)}
+					onMouseDown={() =>
+						handleButtonPress(
+							selectedLanguage,
+							selectedLanguage2,
+							selectedFeature
+						)
+					}
 					onMouseUp={() => handleButtonRelease()}
-					onTouchStart={() => handleButtonPress(selectedLanguage)}
-					onTouchEnd={() => handleButtonRelease()}
-					onTouchCancel={() => handleButtonRelease()}
+					onTouchStart={() => {
+						handleButtonPress(
+							selectedLanguage,
+							selectedLanguage2,
+							selectedFeature
+						);
+						setTestText("On touch start");
+					}}
+					onTouchEnd={() => {
+						handleButtonRelease();
+						setTestText("On touch end");
+					}}
+					// onTouchCancel={() => handleButtonRelease()}
 					sx={{
 						borderRadius: "50%",
 						height: "80px",
@@ -105,8 +125,8 @@ const Home: React.FC = () => {
 							<option value='Turkish'>Türkçe</option>
 						</select>
 						<select
-							value={selectedLanguage}
-							onChange={(e) => setSelectedLanguage(e.target.value)}
+							value={selectedLanguage2}
+							onChange={(e) => setSelectedLanguage2(e.target.value)}
 						>
 							<option value='English'>English</option>
 							<option value='Turkish'>Türkçe</option>
@@ -140,7 +160,7 @@ const Home: React.FC = () => {
 						</div>
 					</>
 				) : (
-					<CircularProgress />
+					(transcription || isWaiting) && <CircularProgress />
 				)}
 			</div>
 		</DefaultLayout>
