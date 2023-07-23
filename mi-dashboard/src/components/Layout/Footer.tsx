@@ -5,11 +5,11 @@ const Footer: React.FC = () => {
 	return (
 		<Box
 			sx={{
-				backgroundColor: "primary.main",
+				backgroundColor: "rgba(173, 216, 230, 0.5)", // semi-transparent light blue
 				color: "white",
-				p: 3,
+				p: 2,
 				width: "100vw",
-				m: "0 auto",
+				boxShadow: "0px 3px 10px rgba(0, 0, 0, 0.7)", // slight shadow
 			}}
 		>
 			<Typography variant='body2' align='center'>

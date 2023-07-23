@@ -31,24 +31,9 @@ const LogoutButton = () => {
 
 	return (
 		<ThemeProvider theme={myTheme}>
-			<Box
-				sx={{
-					"& button": { m: 1 },
-					"@media (max-width: 200px)": {
-						left: "50px",
-						minWidth: "6rem",
-					},
-				}}
-				style={{
-					position: "fixed",
-					top: "20px",
-					right: "30px",
-				}}
-			>
-				<StyledSignOutButton size='small' onClick={signout} variant='outlined'>
-					Sign Out
-				</StyledSignOutButton>
-			</Box>
+			<StyledSignOutButton size='small' onClick={signout} variant='outlined'>
+				Sign Out
+			</StyledSignOutButton>
 		</ThemeProvider>
 	);
 };
