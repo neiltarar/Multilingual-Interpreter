@@ -50,7 +50,7 @@ export const VoiceProvider: React.FC<{ children: React.ReactNode }> = ({
 					try {
 						// Send the recorded data to the server using Axios
 						await axios
-							.post("http://localhost:5000/api/upload", formData)
+							.post("/api/upload", formData)
 							.then((res) => {
 								const transcriptedSpeech = res.data.message;
 								setTranscription(transcriptedSpeech);
