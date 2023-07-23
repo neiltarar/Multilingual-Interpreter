@@ -29,6 +29,7 @@ export const VoiceProvider: React.FC<{ children: React.ReactNode }> = ({
 		try {
 			const mediaStream = await navigator.mediaDevices.getUserMedia({
 				audio: true,
+				video: false,
 			});
 			mediaRecorderRef.current = new MediaRecorder(mediaStream);
 
@@ -53,7 +54,7 @@ export const VoiceProvider: React.FC<{ children: React.ReactNode }> = ({
 							.then((res) => {
 								const transcriptedSpeech = res.data.message;
 								setTranscription(transcriptedSpeech);
-								setIsWaiting(false);
+								setTimeout(() => setIsWaiting(false), 500);
 							})
 							.catch((err) => {
 								setIsWaiting(false);

@@ -25,6 +25,8 @@ const Home: React.FC = () => {
 	const [selectedLanguage2, setSelectedLanguage2] = useState("english");
 	const [selectedFeature, setSelectedFeature] = useState("transcribe");
 
+	const [testText, setTestText] = useState("test");
+
 	const {
 		//@ts-ignore
 		isRecording,
@@ -50,6 +52,7 @@ const Home: React.FC = () => {
 	return (
 		<DefaultLayout>
 			<LogoutButton />
+			<p>{testText}</p>
 			<div
 				style={{
 					height: "100%",
@@ -78,14 +81,18 @@ const Home: React.FC = () => {
 						)
 					}
 					onMouseUp={() => handleButtonRelease()}
-					onTouchStart={() =>
+					onTouchStart={() => {
 						handleButtonPress(
 							selectedLanguage,
 							selectedLanguage2,
 							selectedFeature
-						)
-					}
-					onTouchEnd={() => handleButtonRelease()}
+						);
+						setTestText("On touch start");
+					}}
+					onTouchEnd={() => {
+						handleButtonRelease();
+						setTestText("On touch end");
+					}}
 					// onTouchCancel={() => handleButtonRelease()}
 					sx={{
 						borderRadius: "50%",
