@@ -52,7 +52,7 @@ const Home: React.FC = () => {
 	return (
 		<DefaultLayout>
 			<LogoutButton />
-			<p>{testText}</p>
+			<p>Hello {currentUser && currentUser.user.name}</p>
 			<div
 				style={{
 					height: "100%",
