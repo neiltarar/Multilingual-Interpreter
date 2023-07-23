@@ -43,11 +43,11 @@ const Home: React.FC = () => {
 	// @ts-ignore
 	const { currentUser } = useAuth();
 
-	// useEffect(() => {
-	// 	if (!currentUser) {
-	// 		navigate("/signin");
-	// 	}
-	// }, [currentUser, navigate]);
+	useEffect(() => {
+		if (!currentUser) {
+			navigate("/signin");
+		}
+	}, [currentUser, navigate]);
 
 	return (
 		<DefaultLayout>

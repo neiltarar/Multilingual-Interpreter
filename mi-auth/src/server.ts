@@ -33,16 +33,17 @@ app.use(cookieParser());
 app.use(express.json()); // for parsing application/json
 app.use(express.static(path.join(__dirname, "build")));
 
-app.get("*", (req, res) => {
-	res.sendFile(path.join(__dirname, "build", "index.html"));
-});
+// app.get("*", (req, res) => {
+// 	res.sendFile(path.join(__dirname, "build", "index.html"));
+// });
 
 app.use("/users", userRoutes);
 app.use("/sessions", sessionRoutes);
+// app.use("/api", authenticateToken);
 app.use("/api", voiceApiRoutes);
-// app.get("*", authenticateToken, (req, res) => {
-// 	res.sendFile(path.join(__dirname, "build", "index.html"));
-// });
+app.get("*", authenticateToken, (req, res) => {
+	res.sendFile(path.join(__dirname, "build", "index.html"));
+});
 
 app.listen(PORT, () =>
 	console.log(`Server is running on http://localhost:${PORT}`)

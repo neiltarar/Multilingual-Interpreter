@@ -1,6 +1,7 @@
 import http from "http";
 
 export const uploadVoice = async (req: any, res: any): Promise<any> => {
+	console.log("hit api route");
 	const proxy = await http.request(
 		{
 			host: "localhost",
