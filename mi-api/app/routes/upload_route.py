@@ -16,6 +16,7 @@ def upload_route():
         selected_language = request.form['selectedLanguage'].lower()
         selected_language2 = request.form['selectedLanguage2'].lower()
         selected_feature = request.form['selectedFeature'].lower()
+        transcription_model = request.form['selectedTranscriptionSpeed'].lower()
         file_path, error = process_audio_file(audio_file)
         print("selected feature: " + selected_feature)
         print(selected_language, selected_language2)
@@ -25,7 +26,7 @@ def upload_route():
             with sr.AudioFile(file_path) as source:
                 if selected_feature == 'transcribe':
                     audio = speech_recogniser.record(source)
-                    text = speech_recogniser.recognize_whisper(model="small", language=selected_language, audio_data=audio)
+                    text = speech_recogniser.recognize_whisper(model=transcription_model, language=selected_language, audio_data=audio)
                     if(len(text.split()) > 20):
                         new_text = add_newline_every_20_words(text)
                         return jsonify({"message": new_text})

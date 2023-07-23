@@ -23,7 +23,8 @@ export const VoiceProvider: React.FC<{ children: React.ReactNode }> = ({
 	const handleButtonPress = async (
 		selectedLanguage: string,
 		selectedLanguage2: string,
-		selectedFeature: string
+		selectedFeature: string,
+		selectedTranscriptionSpeed: string
 	) => {
 		setIsRecording(true);
 		try {
@@ -44,7 +45,10 @@ export const VoiceProvider: React.FC<{ children: React.ReactNode }> = ({
 					formData.append("selectedLanguage", selectedLanguage);
 					formData.append("selectedLanguage2", selectedLanguage2);
 					formData.append("selectedFeature", selectedFeature);
-
+					formData.append(
+						"selectedTranscriptionSpeed",
+						selectedTranscriptionSpeed
+					);
 					setIsWaiting(true);
 
 					try {
