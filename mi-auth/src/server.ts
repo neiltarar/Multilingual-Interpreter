@@ -9,7 +9,7 @@ import cookieParser from "cookie-parser";
 import { authenticateToken } from "./middlewares/authMiddleware";
 import { rateLimit } from "express-rate-limit";
 
-dotenv.config();
+dotenv.config({ path: './src/.env' });
 
 const app = express();
 const PORT = process.env.AUTH_API_PORT || 3001;
@@ -20,7 +20,7 @@ const appLimiter = rateLimit({
 	standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
 	legacyHeaders: false, // Disable the `X-RateLimit-*` headers
 });
-
+console.log(process.env.NODE_ENV)
 isProduction
 	? app.use(cors({ origin: "https://neil-tarar.com", credentials: true }))
 	: app.use(cors({ origin: "http://localhost:3000", credentials: true }));
