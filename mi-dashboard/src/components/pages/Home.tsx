@@ -52,7 +52,7 @@ const Home: React.FC = () => {
 	const [selectedFeature, setSelectedFeature] = useState("transcribe");
 	const [selectedTranscriptionSpeed, setSelectedTranscriptionSpeed] = useState<
 		string | null
-	>(null);
+	>("base");
 
 	function valuetext(value: number) {
 		return `${value}`;
