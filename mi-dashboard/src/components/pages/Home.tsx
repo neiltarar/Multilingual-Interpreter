@@ -119,9 +119,11 @@ const Home: React.FC = () => {
 						>
 							<MenuItem value='transcribe'>Transcript</MenuItem>
 							<MenuItem value='translate'>Translate</MenuItem>
+							<MenuItem value='gptHelper'>GPT Helper</MenuItem>
 						</Select>
 					</FormControl>
-					{selectedFeature === "transcribe" ? (
+					{selectedFeature === "transcribe" ||
+					selectedFeature === "gptHelper" ? (
 						<FormControl
 							variant='standard'
 							color='primary'
