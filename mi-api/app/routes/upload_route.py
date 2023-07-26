@@ -24,21 +24,25 @@ def upload_route():
             return jsonify({'error': error})
         try:
             with sr.AudioFile(file_path) as source:
+                audio = speech_recogniser.record(source)
+                text = speech_recogniser.recognize_whisper(model=transcription_model, language=selected_language, audio_data=audio)
+                
                 if selected_feature == 'transcribe':
-                    audio = speech_recogniser.record(source)
-                    text = speech_recogniser.recognize_whisper(model=transcription_model, language=selected_language, audio_data=audio)
                     if(len(text.split()) > 20):
                         new_text = add_newline_every_20_words(text)
                         return jsonify({"message": new_text})
                     print('transcription has been sent')
                     return jsonify({"message": text})
                 
-                # Chat GPT is closed while testing deployment             
-                # translated_text_object = translation(selected_language, selected_language2, text)
-                # translated_text = translated_text_object.choices[0].text.strip() 
-                # print('translation has been sent')
-                # return jsonify({'message':f'Original: {text}\ntranslation: {translated_text}'})
-                return jsonify({"message": "Translation is currently out of service"})
+                translated_text_object = translation(selected_language, selected_language2, text)
+                translated_text = translated_text_object.choices[0].text.strip() 
+                if(len(translated_text.split()) > 20):
+                    print('translation has been sent')
+                    return jsonify({'message':f'Original: {text}\nTranslation: {translated_text}'})
+                
+                print('translation has been sent')
+                return jsonify({'message':f'Original: {text}\nTranslation: {translated_text}'})
+        
         except sr.UnknownValueError:
             return jsonify({"message":"Couldn't understand your speech"})
         except sr.RequestError as e:
