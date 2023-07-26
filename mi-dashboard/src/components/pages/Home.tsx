@@ -103,7 +103,7 @@ const Home: React.FC = () => {
 					style={{
 						display: "flex",
 						justifyContent: "center",
-						gap: "3rem",
+						gap: "1rem",
 						margin: "0 0 1rem 0",
 					}}
 				>
@@ -111,7 +111,7 @@ const Home: React.FC = () => {
 						variant='standard'
 						color='primary'
 						size='medium'
-						sx={{ m: 1, minWidth: 120 }}
+						sx={{ m: 3, minWidth: 120 }}
 					>
 						<Select
 							value={selectedFeature}
@@ -126,7 +126,7 @@ const Home: React.FC = () => {
 							variant='standard'
 							color='primary'
 							size='medium'
-							sx={{ m: 1, minWidth: 120 }}
+							sx={{ m: 3, minWidth: 120 }}
 						>
 							<Select
 								value={selectedLanguage}
@@ -277,12 +277,13 @@ const Home: React.FC = () => {
 				)}
 
 				{transcription && !isWaiting ? (
-					<>
+					<React.Fragment>
 						<div
 							style={{
-								width: "100%",
-								textAlign: "center",
-								marginTop: "1rem",
+								display: "flex",
+								flexDirection: "column",
+								justifyContent: "center",
+								margin: "1rem 2rem",
 							}}
 						>
 							{transcription
@@ -293,7 +294,7 @@ const Home: React.FC = () => {
 									</Typography>
 								))}
 						</div>
-					</>
+					</React.Fragment>
 				) : (
 					(transcription || isWaiting) && <CircularProgress />
 				)}
