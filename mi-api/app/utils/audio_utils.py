@@ -3,6 +3,7 @@ from werkzeug.utils import secure_filename
 from config import ALLOWED_EXTENSIONS
 import speech_recognition as sr
 import os
+import glob
 
 speech_recogniser = sr.Recognizer()
 
@@ -47,3 +48,8 @@ def process_audio_file(audio_file):
         f.write(audio_data)
 
     return converted_file_path, None
+
+def delete_audio_files():
+    files = glob.glob('uploads/*')
+    for f in files:
+        os.remove(f)

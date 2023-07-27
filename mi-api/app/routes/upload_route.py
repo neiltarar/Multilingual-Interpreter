@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from utils.audio_utils import process_audio_file
+from utils.audio_utils import process_audio_file, delete_audio_files
 from utils.word_splitter import add_newline_every_20_words
 from services.openai_service import translation, gpt_helper
 import speech_recognition as sr
@@ -32,12 +32,12 @@ def upload_route():
                         new_text = add_newline_every_20_words(text)
                         return jsonify({"message": new_text})
                     print('transcription has been sent')
+                    delete_audio_files()
                     return jsonify({"message": text})
                 elif selected_feature == 'gpthelper':
                     gpt_answer_object = gpt_helper(text)
-                    print('gpt answer:\n')
-                    print(gpt_answer_object)
                     gpt_answer = gpt_answer_object.choices[0].text.strip() 
+                    delete_audio_files()
                     return jsonify({'message':f'GPT: {gpt_answer}'})
 
                 translated_text_object = translation(selected_language, selected_language2, text)
@@ -47,15 +47,19 @@ def upload_route():
                     return jsonify({'message':f'Original: {text}\nTranslation: {translated_text}'})
                 
                 print('translation has been sent')
+                delete_audio_files()
                 return jsonify({'message':f'Original: {text}\nTranslation: {translated_text}'})
         
         except sr.UnknownValueError:
+            delete_audio_files()
             return jsonify({"message":"Couldn't understand your speech"})
         except sr.RequestError as e:
             print(f"Error: {e}")
-            return jsonify({'message': 'Audio received and processed successfully'})
+            delete_audio_files()
+            return jsonify({"message": "Couldn't understand your speech"})
         except Exception as e:
             print(f"Error as exeption: {e}")
+            delete_audio_files()
             return jsonify({"message": "I am sorry I didn't catch what you said\nOzur dilerim ne soyledigini anlayamadim!"})
     else:
         return jsonify({'error': 'No audio file found'})
