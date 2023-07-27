@@ -1,5 +1,8 @@
-import express from "express";
+// Set env variables
 import dotenv from "dotenv";
+dotenv.config({ path: './src/.env' });
+// Import libraries
+import express from "express";
 import userRoutes from "./routes/userRoutes";
 import sessionRoutes from "./routes/sessionRoutes";
 import voiceApiRoutes from "./routes/voiceApiRoutes";
@@ -8,8 +11,6 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import { authenticateToken } from "./middlewares/authMiddleware";
 import { rateLimit } from "express-rate-limit";
-
-dotenv.config({ path: './src/.env' });
 
 const app = express();
 const PORT = process.env.AUTH_API_PORT || 3001;

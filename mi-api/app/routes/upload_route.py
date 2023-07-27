@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 from utils.audio_utils import process_audio_file
 from utils.word_splitter import add_newline_every_20_words
-from services.openai_service import translation
+from services.openai_service import translation, gpt_helper
 import speech_recognition as sr
 
 upload_bp = Blueprint('upload_bp', __name__)  # Creating a Blueprint
@@ -33,7 +33,13 @@ def upload_route():
                         return jsonify({"message": new_text})
                     print('transcription has been sent')
                     return jsonify({"message": text})
-                
+                elif selected_feature == 'gpthelper':
+                    gpt_answer_object = gpt_helper(text)
+                    print('gpt answer:\n')
+                    print(gpt_answer_object)
+                    gpt_answer = gpt_answer_object.choices[0].text.strip() 
+                    return jsonify({'message':f'GPT: {gpt_answer}'})
+
                 translated_text_object = translation(selected_language, selected_language2, text)
                 translated_text = translated_text_object.choices[0].text.strip() 
                 if(len(translated_text.split()) > 20):
