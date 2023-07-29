@@ -29,9 +29,9 @@ def gpt_helper(request_text):
 
 def image_generation(image_promt_text):
     response = openai.Image.create(
-        prompt="a white siamese cat",
+        prompt=f"{image_promt_text}",
         n=1,
-        size="1024x1024"
+        size="256x256"
     )
     image_url = response['data'][0]['url']
 

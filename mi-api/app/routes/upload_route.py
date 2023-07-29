@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 from utils.audio_utils import process_audio_file, delete_specific_files
 from utils.word_splitter import add_newline_every_20_words
-from services.openai_service import translation, gpt_helper
+from services.openai_service import translation, gpt_helper, image_generation
 import speech_recognition as sr
 
 upload_bp = Blueprint('upload_bp', __name__)  # Creating a Blueprint
@@ -40,6 +40,10 @@ def upload_route():
                     gpt_answer = gpt_answer_object.choices[0].text.strip() 
                     delete_specific_files(files_to_delete)
                     return jsonify({'message':f'GPT: {gpt_answer}'})
+                elif selected_feature == 'imagegenerator':
+                    gpt_image_url = image_generation(text)
+                    delete_specific_files(files_to_delete)
+                    return jsonify({'message': gpt_image_url})
 
                 translated_text_object = translation(selected_language, selected_language2, text)
                 translated_text = translated_text_object.choices[0].text.strip() 
