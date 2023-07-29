@@ -26,3 +26,13 @@ def gpt_helper(request_text):
         presence_penalty=0.0
     )
     return response
+
+def image_generation(image_promt_text):
+    response = openai.Image.create(
+        prompt="a white siamese cat",
+        n=1,
+        size="1024x1024"
+    )
+    image_url = response['data'][0]['url']
+
+    return image_url
