@@ -2,6 +2,10 @@
 
 Multilingual Assistant is a web application that enables users to interact with a chatbot powered by OpenAI's ChatGPT. Users can enter text or use their microphone to communicate in various languages. The chatbot can translate the entered text into the desired language, providing a seamless multilingual conversational experience. 💬
 
+## 🎥 Demo Video
+
+<iframe width="560" height="315" src="https://neil-tarar.com/videos/Speak2GPT_demo.mp4" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
 ## 🔧 Technologies Used
 
 - 📚 React
