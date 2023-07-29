@@ -3,10 +3,12 @@ import { Box, Typography, Slider } from "@mui/material";
 
 interface SlideBarProps {
 	setSelectedTranscriptionSpeed: Function;
+	selectedTranscriptionSpeed: string | null;
 }
 
 const SliderBar: React.FC<SlideBarProps> = ({
 	setSelectedTranscriptionSpeed,
+	selectedTranscriptionSpeed,
 }) => {
 	const marks = [
 		{
@@ -31,6 +33,23 @@ const SliderBar: React.FC<SlideBarProps> = ({
 		},
 	];
 
+	const translateSpeedToSliderValue = (speed: string | null) => {
+		switch (speed) {
+			case "tiny":
+				return 100;
+			case "base":
+				return 75;
+			case "small":
+				return 50;
+			case "medium":
+				return 25;
+			case "large":
+				return 0;
+			default:
+				return 75; // or whatever default you want
+		}
+	};
+
 	function valuetext(value: number) {
 		return `${value}`;
 	}
@@ -52,6 +71,7 @@ const SliderBar: React.FC<SlideBarProps> = ({
 				Slide to balance speed and accuracy of voice transcription.
 			</Typography>
 			<Slider
+				value={translateSpeedToSliderValue(selectedTranscriptionSpeed)}
 				aria-label='Always visible'
 				defaultValue={75}
 				getAriaValueText={valuetext}
