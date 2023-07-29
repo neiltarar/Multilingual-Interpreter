@@ -17,6 +17,7 @@ To get started with the project, follow these steps:
 
 - Node.js (v14 or later)
 - Python (v3.6 or later)
+- ffmpeg version 4.4.2 (For audio conversion)
 
 ### Installation
 

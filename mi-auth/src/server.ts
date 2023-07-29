@@ -1,5 +1,8 @@
-import express from "express";
+// Set env variables
 import dotenv from "dotenv";
+dotenv.config({ path: './src/.env' });
+// Import libraries
+import express from "express";
 import userRoutes from "./routes/userRoutes";
 import sessionRoutes from "./routes/sessionRoutes";
 import voiceApiRoutes from "./routes/voiceApiRoutes";
@@ -9,9 +12,9 @@ import cookieParser from "cookie-parser";
 import { authenticateToken } from "./middlewares/authMiddleware";
 import { rateLimit } from "express-rate-limit";
 
-dotenv.config({ path: './src/.env' });
-
 const app = express();
+// This tells Express that it's behind a proxy, and that it should trust the X-Forwarded-For header
+app.set('trust proxy', 1);
 const PORT = process.env.AUTH_API_PORT || 3001;
 const isProduction = process.env.NODE_ENV === "production";
 const appLimiter = rateLimit({
@@ -22,7 +25,7 @@ const appLimiter = rateLimit({
 });
 console.log(process.env.NODE_ENV)
 isProduction
-	? app.use(cors({ origin: "https://neil-tarar.com", credentials: true }))
+	? app.use(cors({ origin: "https://gpt-helper.duckdns.org", credentials: true }))
 	: app.use(cors({ origin: "http://localhost:3000", credentials: true }));
 
 isProduction
