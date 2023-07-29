@@ -46,9 +46,7 @@ const FormControls: React.FC<FormControlsProps> = ({
 					<MenuItem value='imageGenerator'>Image Generator</MenuItem>
 				</Select>
 			</FormControl>
-			{selectedFeature === "transcribe" ||
-			selectedFeature === "gptHelper" ||
-			selectedFeature === "imageGenerator" ? (
+			{!(selectedFeature === "translate") ? (
 				<FormControl
 					variant='standard'
 					color='primary'
@@ -62,6 +60,8 @@ const FormControls: React.FC<FormControlsProps> = ({
 					>
 						<MenuItem value='English'>English</MenuItem>
 						<MenuItem value='Turkish'>Turkish</MenuItem>
+						<MenuItem value='Spanish'>Spanish</MenuItem>
+						<MenuItem value='French'>French</MenuItem>
 					</Select>
 				</FormControl>
 			) : (
@@ -78,6 +78,8 @@ const FormControls: React.FC<FormControlsProps> = ({
 						>
 							<MenuItem value='English'>English</MenuItem>
 							<MenuItem value='Turkish'>Turkish</MenuItem>
+							<MenuItem value='Spanish'>Spanish</MenuItem>
+							<MenuItem value='French'>French</MenuItem>
 						</Select>
 					</FormControl>
 					<FormControl
@@ -92,6 +94,8 @@ const FormControls: React.FC<FormControlsProps> = ({
 						>
 							<MenuItem value='English'>English</MenuItem>
 							<MenuItem value='Turkish'>Turkish</MenuItem>
+							<MenuItem value='Spanish'>Spanish</MenuItem>
+							<MenuItem value='French'>French</MenuItem>
 						</Select>
 					</FormControl>
 				</Box>
