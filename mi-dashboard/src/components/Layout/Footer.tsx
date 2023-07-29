@@ -10,6 +10,7 @@ const Footer: React.FC = () => {
 				p: 2,
 				width: "100vw",
 				boxShadow: "0px 3px 10px rgba(0, 0, 0, 0.7)", // slight shadow
+				mt: "auto",
 			}}
 		>
 			<Typography variant='body2' align='center'>
@@ -36,7 +37,7 @@ const Footer: React.FC = () => {
 			<Typography variant='body2' align='center' mt={1}>
 				Created by&nbsp;
 				<Link
-					href='http://neil-tarar.com'
+					href='https://neil-tarar.com'
 					target='_blank'
 					rel='noopener noreferrer'
 					color='inherit'
