@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
-import { Typography, Select, MenuItem, FormControl } from "@mui/material";
-import { useTheme } from "@mui/material/styles";
+import { Typography } from "@mui/material";
 import CircularProgress from "@mui/material/CircularProgress";
 import Box from "@mui/material/Box";
 import { useVoice } from "../../contexts/VoiceContext";
@@ -14,17 +13,11 @@ import PressToSpeakButton from "../Layout/PressToSpeakButton";
 import soundWaveGif from "../../assets/waves.gif";
 import "../../App.css";
 
-const API_URL =
-	process.env.NODE_ENV === "production"
-		? process.env.REACT_APP_API_URL_DEPLOY
-		: process.env.REACT_APP_API_URL_DEV;
-
 interface Props {
 	currentUser: { user: { name: string; id: number } };
 }
 
 const Home: React.FC = () => {
-	const theme = useTheme();
 	const navigate = useNavigate();
 	const [selectedLanguage, setSelectedLanguage] = useState("English");
 	const [selectedLanguage2, setSelectedLanguage2] = useState("Turkish");
@@ -87,6 +80,7 @@ const Home: React.FC = () => {
 					/>
 				) : (
 					<SliderBar
+						selectedTranscriptionSpeed={selectedTranscriptionSpeed}
 						setSelectedTranscriptionSpeed={setSelectedTranscriptionSpeed}
 					/>
 				)}
