@@ -4,7 +4,7 @@ Multilingual Assistant is a web application that enables users to interact with 
 
 ## 🎥 Demo Video
 
-Check out the demo video [here]("https://neil-tarar.com/videos/Speak2GPT_demo.mp4")
+Check out the demo video [here](https://neil-tarar.com/videos/Speak2GPT_demo.mp4)
 
 ## 🔧 Technologies Used
 
