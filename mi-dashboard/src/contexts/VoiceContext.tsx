@@ -1,8 +1,9 @@
 import { createContext, useContext, useState, useRef } from "react";
+import { useAuth } from "./AuthContext";
 import axios from "axios";
 
 interface VoiceContextType {
-	//TODO define the properties and methods of your context value
+	//TODO define the properties and methods of the context value
 }
 
 const VoiceContext = createContext<VoiceContextType | undefined>(undefined);
@@ -15,10 +16,11 @@ export const VoiceProvider: React.FC<{ children: React.ReactNode }> = ({
 	children,
 }) => {
 	const mediaRecorderRef = useRef<MediaRecorder | null>(null);
-
 	const [transcription, setTranscription] = useState(null);
 	const [isRecording, setIsRecording] = useState(false);
 	const [isWaiting, setIsWaiting] = useState(false);
+	// @ts-ignore
+	const { signout } = useAuth();
 
 	const handleButtonPress = async (
 		selectedLanguage: string,
@@ -63,10 +65,12 @@ export const VoiceProvider: React.FC<{ children: React.ReactNode }> = ({
 							.catch((err) => {
 								setIsWaiting(false);
 								console.error(err);
+								signout();
 							});
 					} catch (error) {
 						setIsWaiting(false);
 						console.error("Error uploading recorded sound:", error);
+						signout();
 					}
 				}
 			);

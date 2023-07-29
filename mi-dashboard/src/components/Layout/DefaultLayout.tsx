@@ -50,7 +50,7 @@ const DefaultLayout: React.FC<DefaultLayoutProps> = ({ children }) => {
 					<Typography variant='h2' gutterBottom>
 						Universal Translator
 					</Typography>
-					<Box>{children}</Box>
+					<Box height='100%'>{children}</Box>
 				</Box>
 				<Footer />
 			</Box>
