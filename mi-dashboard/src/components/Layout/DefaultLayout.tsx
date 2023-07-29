@@ -48,7 +48,7 @@ const DefaultLayout: React.FC<DefaultLayoutProps> = ({ children }) => {
 						<LogoutButton />
 					</Box>
 					<Typography variant='h2' gutterBottom>
-						GPT Helper
+						Speak2GPT
 					</Typography>
 					<Box height='100%'>{children}</Box>
 				</Box>
