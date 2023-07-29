@@ -19,7 +19,7 @@ const DefaultLayout: React.FC<DefaultLayoutProps> = ({ children }) => {
 				flexDirection='column'
 				justifyContent='space-between'
 				alignItems='center'
-				width='100vw'
+				width='100%'
 			>
 				<Box
 					className='main-page'
@@ -48,7 +48,7 @@ const DefaultLayout: React.FC<DefaultLayoutProps> = ({ children }) => {
 						<LogoutButton />
 					</Box>
 					<Typography variant='h2' gutterBottom>
-						Universal Translator
+						GPT Helper
 					</Typography>
 					<Box height='100%'>{children}</Box>
 				</Box>

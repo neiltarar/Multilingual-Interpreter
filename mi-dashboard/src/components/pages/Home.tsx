@@ -1,20 +1,36 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
-import { Typography } from "@mui/material";
-import CircularProgress from "@mui/material/CircularProgress";
-import Box from "@mui/material/Box";
+import { Typography, Box } from "@mui/material";
 import { useVoice } from "../../contexts/VoiceContext";
 import { useAuth } from "../../contexts/AuthContext";
 import DefaultLayout from "../Layout/DefaultLayout";
 import SliderBar from "../Layout/SliderBar";
 import FormControls from "../Layout/FormControls";
 import PressToSpeakButton from "../Layout/PressToSpeakButton";
+import GPTResponseText from "../Layout/GPTResponseText";
 import soundWaveGif from "../../assets/waves.gif";
 import "../../App.css";
 
-interface Props {
-	currentUser: { user: { name: string; id: number } };
+interface User {
+	user: { name: string; id: number };
+}
+
+interface AuthContextType {
+	currentUser: User | null;
+}
+
+interface VoiceContextType {
+	transcription: string;
+	setTranscription: React.Dispatch<React.SetStateAction<string | null>>;
+	handleButtonPress: (
+		selectedLanguage: string,
+		selectedLanguage2: string,
+		selectedFeature: string,
+		selectedTranscriptionSpeed: string
+	) => Promise<void>;
+	handleButtonRelease: () => void;
+	isRecording: boolean;
+	isWaiting: boolean;
 }
 
 const Home: React.FC = () => {
@@ -27,20 +43,14 @@ const Home: React.FC = () => {
 	>("base");
 
 	const {
-		//@ts-ignore
 		isRecording,
-		//@ts-ignore
 		transcription,
-		//@ts-ignore
 		handleButtonPress,
-		//@ts-ignore
 		handleButtonRelease,
-		//@ts-ignore
 		isWaiting,
-	} = useVoice();
+	} = useVoice() as VoiceContextType;
 
-	// @ts-ignore
-	const { currentUser } = useAuth();
+	const { currentUser } = useAuth() as AuthContextType;
 
 	useEffect(() => {
 		if (!currentUser) {
@@ -111,29 +121,7 @@ const Home: React.FC = () => {
 					selectedTranscriptionSpeed={selectedTranscriptionSpeed}
 					handleButtonRelease={handleButtonRelease}
 				/>
-				<Box
-					sx={{
-						display: "flex",
-						flexDirection: "column",
-						justifyContent: "center",
-						alignItems: "center",
-						m: "2rem auto",
-					}}
-				>
-					{transcription && !isWaiting ? (
-						<>
-							{transcription
-								.split("\n")
-								.map((sentence: string, index: number) => (
-									<Typography variant='body1' key={index}>
-										{sentence}
-									</Typography>
-								))}
-						</>
-					) : (
-						(transcription || isWaiting) && <CircularProgress />
-					)}
-				</Box>
+				<GPTResponseText transcription={transcription} isWaiting={isWaiting} />
 			</Box>
 		</DefaultLayout>
 	);
