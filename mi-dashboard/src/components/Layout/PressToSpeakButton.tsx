@@ -63,7 +63,7 @@ const PressToSpeakButton: React.FC<PressToSpeakButtonProps> = ({
 			}}
 		>
 			<Typography variant='button' sx={{ color: theme.palette.common.white }}>
-				Hold to translate
+				Hold to speak
 			</Typography>
 		</Button>
 	);
