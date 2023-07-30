@@ -1,6 +1,7 @@
 from flask import Flask
 from flask_cors import CORS
 from dotenv import load_dotenv
+from config import MAX_CONTENT_LENGTH
 
 # import routes
 from routes.upload_route import upload_bp
@@ -9,6 +10,9 @@ from routes.upload_route import upload_bp
 load_dotenv()
 
 app = Flask(__name__)
+
+# Limit the audio file size being sent 
+app.config['MAX_CONTENT_LENGTH'] = MAX_CONTENT_LENGTH 
 CORS(app)
 
 # register route

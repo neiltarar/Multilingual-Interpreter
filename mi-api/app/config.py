@@ -1,1 +1,2 @@
 ALLOWED_EXTENSIONS = {'webm', 'ogg', 'wav'}
+MAX_CONTENT_LENGTH = 1 * 1024 * 1024  # 1MB1
