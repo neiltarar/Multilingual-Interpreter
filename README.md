@@ -1,6 +1,6 @@
 # 🌍 Speak2GPT
 
-Multilingual Assistant is a web application that enables users to interact with a chatbot powered by OpenAI's ChatGPT. Users can enter text or use their microphone to communicate in various languages. The chatbot can translate the entered text into the desired language, providing a seamless multilingual conversational experience. 💬
+Multilingual Assistant is a web application that enables users to interact with a chatbot powered by OpenAI's ChatGPT. Users can use their microphone to communicate in various languages. The chatbot can translate the entered text into the desired language, providing a seamless multilingual conversational experience. 💬
 
 ## 🎥 Demo Video
 
