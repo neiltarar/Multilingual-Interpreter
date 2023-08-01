@@ -83,11 +83,20 @@ const Home: React.FC = () => {
 				}}
 			>
 				{isRecording ? (
-					<img
-						src={soundWaveGif}
-						alt='sound wave gif'
-						style={{ width: "300px" }}
-					/>
+					<Box
+						sx={{
+							width: {
+								xs: 300,
+								sm: 450,
+							},
+							margin: {
+								xs: "0.5rem auto",
+								sm: "2.5rem auto",
+							},
+						}}
+					>
+						<img src={soundWaveGif} alt='sound wave gif' />
+					</Box>
 				) : (
 					<SliderBar
 						selectedTranscriptionSpeed={selectedTranscriptionSpeed}
