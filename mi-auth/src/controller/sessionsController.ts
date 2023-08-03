@@ -46,11 +46,13 @@ export const signin = async (req: Request, res: Response) => {
 				// set response object, cookies etc
 				res.cookie("accessToken", accessToken, {
 					httpOnly: true,
-					secure: false,
+					// Force send only on HTTPS
+					secure: true,
 				});
 				res.cookie("refreshToken", refreshToken, {
 					httpOnly: true,
-					secure: false,
+					// Force send only on HTTPS
+					secure: true,
 				});
 				res.status(200).json({
 					message: "Successful Login",
