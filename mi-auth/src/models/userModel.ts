@@ -9,10 +9,13 @@ interface createUserProps {
 
 interface User {
 	id: number;
-	firstName: string;
-	lastName: string;
+	first_name: string;
+	last_name: string;
 	email: string;
+	password_hash: string;
 	is_activated: boolean;
+	unlimited_req: boolean;
+	total_req_left: number;
 }
 
 export const user = {

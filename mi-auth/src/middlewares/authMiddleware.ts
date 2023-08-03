@@ -39,7 +39,7 @@ export const authenticateToken = async (req, res, next) => {
 								{ userId: user.userId, email: user.email },
 								//@ts-ignore
 								process.env.ACCESS_TOKEN_SECRET_KEY,
-								{ expiresIn: "1m" }
+								{ expiresIn: "10m" }
 							);
 							res.cookie("accessToken", newAccessToken, {
 								httpOnly: true,
