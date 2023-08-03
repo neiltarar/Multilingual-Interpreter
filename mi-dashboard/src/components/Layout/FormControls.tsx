@@ -59,6 +59,7 @@ const FormControls: React.FC<FormControlsProps> = ({
 						sx={{ color: theme.palette.text.primary }}
 					>
 						<MenuItem value='English'>English</MenuItem>
+						<MenuItem value='German'>German</MenuItem>
 						<MenuItem value='Turkish'>Turkish</MenuItem>
 						<MenuItem value='Spanish'>Spanish</MenuItem>
 						<MenuItem value='French'>French</MenuItem>
@@ -77,6 +78,7 @@ const FormControls: React.FC<FormControlsProps> = ({
 							onChange={(e) => setSelectedLanguage(e.target.value)}
 						>
 							<MenuItem value='English'>English</MenuItem>
+							<MenuItem value='German'>German</MenuItem>
 							<MenuItem value='Turkish'>Turkish</MenuItem>
 							<MenuItem value='Spanish'>Spanish</MenuItem>
 							<MenuItem value='French'>French</MenuItem>
@@ -93,6 +95,7 @@ const FormControls: React.FC<FormControlsProps> = ({
 							onChange={(e) => setSelectedLanguage2(e.target.value)}
 						>
 							<MenuItem value='English'>English</MenuItem>
+							<MenuItem value='German'>German</MenuItem>
 							<MenuItem value='Turkish'>Turkish</MenuItem>
 							<MenuItem value='Spanish'>Spanish</MenuItem>
 							<MenuItem value='French'>French</MenuItem>
