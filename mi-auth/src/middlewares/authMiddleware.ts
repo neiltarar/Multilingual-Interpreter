@@ -43,7 +43,8 @@ export const authenticateToken = async (req, res, next) => {
 							);
 							res.cookie("accessToken", newAccessToken, {
 								httpOnly: true,
-								secure: false,
+								// Force send only HTTPS
+								secure: true,
 							});
 							next();
 						}
