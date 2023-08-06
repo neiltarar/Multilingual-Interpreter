@@ -43,8 +43,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 				withCredentials: true,
 			});
 			if (response.status === 200) {
+				const { user } = response.data;
 				setCurrentUser({
-					user: { name: response.data.user.name },
+					user: {
+						name: user.name,
+						apiRights: user.apiRights,
+					},
 				});
 				setLoading(true);
 				localStorage.setItem(
@@ -86,6 +90,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
 	const value = {
 		currentUser,
+		setCurrentUser,
 		signup,
 		signin,
 		signout,

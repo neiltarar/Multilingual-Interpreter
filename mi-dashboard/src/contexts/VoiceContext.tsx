@@ -6,6 +6,20 @@ interface VoiceContextType {
 	//TODO define the properties and methods of the context value
 }
 
+interface AuthContextType {
+	currentUser: {
+		user: {
+			name: string;
+			apiRights: {
+				totalReqLeft: number;
+				unlimitedReq: boolean;
+			};
+		};
+	};
+	setCurrentUser: (user: any) => void;
+	signout: () => void;
+}
+
 const VoiceContext = createContext<VoiceContextType | undefined>(undefined);
 
 export const useVoice = () => {
@@ -19,8 +33,7 @@ export const VoiceProvider: React.FC<{ children: React.ReactNode }> = ({
 	const [transcription, setTranscription] = useState(null);
 	const [isRecording, setIsRecording] = useState(false);
 	const [isWaiting, setIsWaiting] = useState(false);
-	// @ts-ignore
-	const { signout } = useAuth();
+	const { currentUser, setCurrentUser, signout } = useAuth() as AuthContextType;
 
 	const handleButtonPress = async (
 		selectedLanguage: string,
@@ -54,13 +67,39 @@ export const VoiceProvider: React.FC<{ children: React.ReactNode }> = ({
 					setIsWaiting(true);
 
 					try {
+						// TODO handle this on the BE later. We are doing the check regardless so no safety issue
+						if (currentUser && currentUser.user.apiRights.totalReqLeft !== 0) {
+							const updatedCurrentUser = {
+								user: {
+									name: currentUser.user.name,
+									apiRights: {
+										totalReqLeft: currentUser.user.apiRights.totalReqLeft - 1,
+										unlimitedReq: currentUser.user.apiRights.unlimitedReq,
+									},
+								},
+							};
+
+							localStorage.setItem(
+								"currentUser",
+								JSON.stringify(updatedCurrentUser)
+							);
+							setCurrentUser(updatedCurrentUser);
+						}
+						// ABOVE WILL BE HANDLED IN THE BE LATER!!!
+
 						// Send the recorded data to the server using Axios
 						await axios
 							.post("/api/upload", formData)
 							.then((res) => {
-								const transcriptedSpeech = res.data.message;
-								setTranscription(transcriptedSpeech);
-								setTimeout(() => setIsWaiting(false), 500);
+								if (!res.data.apiStatus) {
+									const transcriptedSpeech = res.data.message;
+									setTranscription(transcriptedSpeech);
+									setTimeout(() => setIsWaiting(false), 500);
+								} else {
+									const transcriptedSpeech = res.data.message;
+									setTranscription(transcriptedSpeech);
+									setIsWaiting(true);
+								}
 							})
 							.catch((err) => {
 								setIsWaiting(false);

@@ -1,5 +1,5 @@
 import bcrypt from "bcrypt";
-import { user as userModels } from "../models/userModel";
+import { userModels } from "../models/userModel";
 import { isMatchingPasswords, isValidEmail } from "../utils/validators";
 import { UserDto } from "../types/dto/UserDto";
 import dotenv from "dotenv";

@@ -12,7 +12,13 @@ import soundWaveGif from "../../assets/waves.gif";
 import "../../App.css";
 
 interface User {
-	user: { name: string; id: number };
+	user: {
+		name: string;
+		apiRights: {
+			totalReqLeft: number;
+			unlimitedReq: boolean;
+		};
+	};
 }
 
 interface AuthContextType {
@@ -31,10 +37,12 @@ interface VoiceContextType {
 	handleButtonRelease: () => void;
 	isRecording: boolean;
 	isWaiting: boolean;
+	setIsWaiting: (value: boolean) => void;
 }
 
 const Home: React.FC = () => {
 	const navigate = useNavigate();
+	const { currentUser } = useAuth() as AuthContextType;
 	const [selectedLanguage, setSelectedLanguage] = useState("English");
 	const [selectedLanguage2, setSelectedLanguage2] = useState("Turkish");
 	const [selectedFeature, setSelectedFeature] = useState("transcribe");
@@ -49,8 +57,6 @@ const Home: React.FC = () => {
 		handleButtonRelease,
 		isWaiting,
 	} = useVoice() as VoiceContextType;
-
-	const { currentUser } = useAuth() as AuthContextType;
 
 	useEffect(() => {
 		if (!currentUser) {
@@ -67,7 +73,10 @@ const Home: React.FC = () => {
 					m: "1rem 0 1rem 0",
 				}}
 			>
-				Hello {currentUser && currentUser.user.name}
+				Hello {currentUser?.user.name}; you have
+				{currentUser?.user.apiRights?.unlimitedReq
+					? " unlimited API requests"
+					: ` ${currentUser?.user.apiRights?.totalReqLeft} API requests left`}
 			</Typography>
 			<Box
 				sx={{
@@ -121,15 +130,18 @@ const Home: React.FC = () => {
 					selectedLanguage2={selectedLanguage2}
 					setSelectedLanguage2={setSelectedLanguage2}
 				/>
-				<PressToSpeakButton
-					isWaiting={isWaiting}
-					handleButtonPress={handleButtonPress}
-					selectedLanguage={selectedLanguage}
-					selectedLanguage2={selectedLanguage2}
-					selectedFeature={selectedFeature}
-					selectedTranscriptionSpeed={selectedTranscriptionSpeed}
-					handleButtonRelease={handleButtonRelease}
-				/>
+				{((currentUser && currentUser.user.apiRights.totalReqLeft > 0) ||
+					currentUser?.user.apiRights.unlimitedReq) && (
+					<PressToSpeakButton
+						isWaiting={isWaiting}
+						handleButtonPress={handleButtonPress}
+						selectedLanguage={selectedLanguage}
+						selectedLanguage2={selectedLanguage2}
+						selectedFeature={selectedFeature}
+						selectedTranscriptionSpeed={selectedTranscriptionSpeed}
+						handleButtonRelease={handleButtonRelease}
+					/>
+				)}
 				<GPTResponseText transcription={transcription} isWaiting={isWaiting} />
 			</Box>
 		</DefaultLayout>

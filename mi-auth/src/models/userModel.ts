@@ -18,7 +18,7 @@ interface User {
 	total_req_left: number;
 }
 
-export const user = {
+export const userModels = {
 	createNewUser: async ({
 		firstName,
 		lastName,
@@ -51,6 +51,28 @@ export const user = {
 			return user;
 		} else {
 			return null;
+		}
+	},
+	apiRequestDeduction: async (id: number): Promise<User | null> => {
+		try {
+			const result = await db(
+				`UPDATE users SET total_req_left = CASE 
+				WHEN unlimited_req = false 
+				AND total_req_left > 0 
+				THEN total_req_left - 1 
+				ELSE total_req_left END 
+				WHERE id = $1 RETURNING id, total_req_left`,
+				[id]
+			);
+			if (result && result.length > 0) {
+				const user: User = result[0];
+				return user;
+			} else {
+				return null;
+			}
+		} catch (error: any) {
+			console.error("An error occurred during API request deduction:", error);
+			throw error;
 		}
 	},
 };

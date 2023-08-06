@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { user as userModels } from "../models/userModel";
+import { userModels } from "../models/userModel";
 import {
 	saveRefreshToken,
 	deleteRefreshToken,
@@ -22,7 +22,8 @@ export const signin = async (req: Request, res: Response) => {
 			const accessToken = jwt.sign(
 				{
 					userId: user.id,
-					email: user.email,
+					name: user.first_name,
+					unlimitedReq: user.unlimited_req,
 				},
 				//@ts-ignore
 				process.env.ACCESS_TOKEN_SECRET_KEY,
@@ -31,7 +32,11 @@ export const signin = async (req: Request, res: Response) => {
 
 			// create refresh token
 			const refreshToken = jwt.sign(
-				{ userId: user.id, email: user.email },
+				{
+					userId: user.id,
+					name: user.first_name,
+					unlimitedReq: user.unlimited_req,
+				},
 				//@ts-ignore
 				process.env.REFRESH_TOKEN_SECRET_KEY,
 				{ expiresIn: "48h" }
@@ -58,8 +63,10 @@ export const signin = async (req: Request, res: Response) => {
 					message: "Successful Login",
 					user: {
 						name: user.first_name,
-						unlimitedReq: user.unlimited_req,
-						totalReqLeft: user.total_req_left,
+						apiRights: {
+							unlimitedReq: user.unlimited_req,
+							totalReqLeft: user.total_req_left,
+						},
 					},
 				});
 			} else {
