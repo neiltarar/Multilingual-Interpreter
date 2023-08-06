@@ -9,13 +9,16 @@ interface createUserProps {
 
 interface User {
 	id: number;
-	firstName: string;
-	lastName: string;
+	first_name: string;
+	last_name: string;
 	email: string;
+	password_hash: string;
 	is_activated: boolean;
+	unlimited_req: boolean;
+	total_req_left: number;
 }
 
-export const user = {
+export const userModels = {
 	createNewUser: async ({
 		firstName,
 		lastName,
@@ -48,6 +51,28 @@ export const user = {
 			return user;
 		} else {
 			return null;
+		}
+	},
+	apiRequestDeduction: async (id: number): Promise<User | null> => {
+		try {
+			const result = await db(
+				`UPDATE users SET total_req_left = CASE 
+				WHEN unlimited_req = false 
+				AND total_req_left > 0 
+				THEN total_req_left - 1 
+				ELSE total_req_left END 
+				WHERE id = $1 RETURNING id, total_req_left`,
+				[id]
+			);
+			if (result && result.length > 0) {
+				const user: User = result[0];
+				return user;
+			} else {
+				return null;
+			}
+		} catch (error: any) {
+			console.error("An error occurred during API request deduction:", error);
+			throw error;
 		}
 	},
 };

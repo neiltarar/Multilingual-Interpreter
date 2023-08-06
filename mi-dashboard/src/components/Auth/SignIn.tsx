@@ -74,7 +74,6 @@ export default function SignIn() {
 		if (response.status !== 200) {
 			setResponseMessage(response.response.data.message);
 		} else {
-			const data = await response;
 			setResponseMessage("Logged in");
 			navigate("/"); // This line will navigate to the home page
 		}
@@ -117,6 +116,7 @@ export default function SignIn() {
 						<Typography component='h1' variant='h5'>
 							Sign in
 						</Typography>
+						<Typography>{responseMessage}</Typography>
 						<Formik
 							initialValues={initialValues}
 							validationSchema={validationSchema}

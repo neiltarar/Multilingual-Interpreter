@@ -1,35 +1,42 @@
+import { Request, Response } from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { user as userModels } from "../models/userModel";
+import { userModels } from "../models/userModel";
 import {
 	saveRefreshToken,
 	deleteRefreshToken,
 	deleteRefreshTokenForUser,
 } from "../models/sessionModel";
 
-//@ts-ignore
-export const signin = async (req, res) => {
+export const signin = async (req: Request, res: Response) => {
 	const { email, password } = req.body;
 	const user = await userModels.findUserByEmail(email);
 
 	// if user exists and is activated by the admin
 	if (user && user.is_activated) {
-		//@ts-ignore
 		const passwordHash = user["password_hash"];
 
 		// if user exists and the password is correct
 		if (user && (await bcrypt.compare(password, passwordHash))) {
 			// create access token
 			const accessToken = jwt.sign(
-				{ userId: user.id, email: user.email },
+				{
+					userId: user.id,
+					name: user.first_name,
+					unlimitedReq: user.unlimited_req,
+				},
 				//@ts-ignore
 				process.env.ACCESS_TOKEN_SECRET_KEY,
-				{ expiresIn: "1m" }
+				{ expiresIn: "10m" }
 			);
 
 			// create refresh token
 			const refreshToken = jwt.sign(
-				{ userId: user.id, email: user.email },
+				{
+					userId: user.id,
+					name: user.first_name,
+					unlimitedReq: user.unlimited_req,
+				},
 				//@ts-ignore
 				process.env.REFRESH_TOKEN_SECRET_KEY,
 				{ expiresIn: "48h" }
@@ -44,16 +51,23 @@ export const signin = async (req, res) => {
 				// set response object, cookies etc
 				res.cookie("accessToken", accessToken, {
 					httpOnly: true,
-					secure: false,
+					// Force send only on HTTPS
+					secure: true,
 				});
 				res.cookie("refreshToken", refreshToken, {
 					httpOnly: true,
-					secure: false,
+					// Force send only on HTTPS
+					secure: true,
 				});
 				res.status(200).json({
 					message: "Successful Login",
-					//@ts-ignore
-					user: { name: user.first_name },
+					user: {
+						name: user.first_name,
+						apiRights: {
+							unlimitedReq: user.unlimited_req,
+							totalReqLeft: user.total_req_left,
+						},
+					},
 				});
 			} else {
 				console.log("Error: Couldn't save the refresh token");
@@ -62,7 +76,6 @@ export const signin = async (req, res) => {
 		}
 		// if the user exists but not yet activated
 	} else if (user && !user.is_activated) {
-		//@ts-ignore
 		const passwordHash = user["password_hash"];
 		if (user && (await bcrypt.compare(password, passwordHash))) {
 			res.status(400).json({ message: "User is not activated by the admin" });
