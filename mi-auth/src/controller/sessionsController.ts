@@ -11,7 +11,6 @@ import {
 export const signin = async (req: Request, res: Response) => {
 	const { email, password } = req.body;
 	const user = await userModels.findUserByEmail(email);
-
 	// if user exists and is activated by the admin
 	if (user && user.is_activated) {
 		const passwordHash = user["password_hash"];
@@ -73,6 +72,9 @@ export const signin = async (req: Request, res: Response) => {
 				console.log("Error: Couldn't save the refresh token");
 				return res.status(500).json({ message: "Internal Server Error" }); // Add return statement here to prevent further execution
 			}
+		} else {
+			// if user exists but the password is incorrect
+			res.status(400).json({ message: "Unauthorised" });
 		}
 		// if the user exists but not yet activated
 	} else if (user && !user.is_activated) {
