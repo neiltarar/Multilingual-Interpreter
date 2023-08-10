@@ -41,18 +41,26 @@ export const userModels = {
 			throw error; // Throw the error to be caught by the caller
 		}
 	},
+
 	findUserByEmail: async (email: string): Promise<User | null> => {
-		const result: any[] | undefined = await db(
-			"SELECT * FROM users WHERE email=$1",
-			[email]
-		);
-		if (result && result.length > 0) {
-			const user: User = result[0];
-			return user;
-		} else {
-			return null;
+		try {
+			const result: any[] | undefined = await db(
+				"SELECT * FROM users WHERE email=$1",
+				[email]
+			);
+
+			if (result && result.length > 0) {
+				const user: User = result[0];
+				return user;
+			} else {
+				return null;
+			}
+		} catch (err) {
+			console.error(`Error fetching user by email ${email}:`, err);
+			throw new Error("Database error when fetching user");
 		}
 	},
+
 	apiRequestDeduction: async (id: number): Promise<User | null> => {
 		try {
 			const result = await db(
