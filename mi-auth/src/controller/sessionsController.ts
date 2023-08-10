@@ -10,91 +10,90 @@ import {
 
 export const signin = async (req: Request, res: Response) => {
 	const { email, password } = req.body;
-	const user = await userModels.findUserByEmail(email);
-	// if user exists and is activated by the admin
-	if (user && user.is_activated) {
-		const passwordHash = user["password_hash"];
+	let user;
 
-		// if user exists and the password is correct
-		if (user && (await bcrypt.compare(password, passwordHash))) {
-			// create access token
-			const accessToken = jwt.sign(
-				{
-					userId: user.id,
-					name: user.first_name,
-					unlimitedReq: user.unlimited_req,
-				},
-				//@ts-ignore
-				process.env.ACCESS_TOKEN_SECRET_KEY,
-				{ expiresIn: "10m" }
-			);
-
-			// create refresh token
-			const refreshToken = jwt.sign(
-				{
-					userId: user.id,
-					name: user.first_name,
-					unlimitedReq: user.unlimited_req,
-				},
-				//@ts-ignore
-				process.env.REFRESH_TOKEN_SECRET_KEY,
-				{ expiresIn: "48h" }
-			);
-
-			// delete any existing previous refresh tokens for the user and create a new one
-			await deleteRefreshTokenForUser(user.id);
-			const result = await saveRefreshToken(user.id, refreshToken);
-
-			// if new refresh token is saved on db with no issues
-			if (result) {
-				// set response object, cookies etc
-				res.cookie("accessToken", accessToken, {
-					httpOnly: true,
-					// Force send only on HTTPS
-					secure: true,
-				});
-				res.cookie("refreshToken", refreshToken, {
-					httpOnly: true,
-					// Force send only on HTTPS
-					secure: true,
-				});
-				res.status(200).json({
-					message: "Successful Login",
-					user: {
-						name: user.first_name,
-						apiRights: {
-							unlimitedReq: user.unlimited_req,
-							totalReqLeft: user.total_req_left,
-						},
-					},
-				});
-			} else {
-				console.log("Error: Couldn't save the refresh token");
-				return res.status(500).json({ message: "Internal Server Error" }); // Add return statement here to prevent further execution
-			}
-		} else {
-			// if user exists but the password is incorrect
-			res.status(400).json({ message: "Unauthorised" });
-		}
-		// if the user exists but not yet activated
-	} else if (user && !user.is_activated) {
-		const passwordHash = user["password_hash"];
-		if (user && (await bcrypt.compare(password, passwordHash))) {
-			res.status(400).json({ message: "User is not activated by the admin" });
-		} else {
-			res.status(400).json({ message: "Unauthorised" });
-		}
-	} else {
-		res.status(400).json({ message: "Unauthorised" });
+	try {
+		user = await userModels.findUserByEmail(email);
+	} catch (err) {
+		console.error("Error fetching user:", err);
+		return res.status(500).json({ message: "Internal Server Error" });
 	}
+
+	// Check if user exists
+	if (!user) {
+		return res.status(401).json({ message: "Unauthorised" });
+	}
+
+	// Check if user is activated by the admin
+	if (!user.is_activated) {
+		// No need to check password for not activated users
+		return res
+			.status(401)
+			.json({ message: "User is not activated by the admin" });
+	}
+
+	// Check if the password is correct
+	const isPasswordValid = await bcrypt.compare(password, user.password_hash);
+	if (!isPasswordValid) {
+		return res.status(401).json({ message: "Unauthorised" });
+	}
+
+	// Create JWT tokens
+	const payload = {
+		userId: user.id,
+		name: user.first_name,
+		unlimitedReq: user.unlimited_req,
+	};
+
+	const accessToken = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET_KEY!, {
+		expiresIn: "10m",
+	});
+
+	const refreshToken = jwt.sign(
+		payload,
+		process.env.REFRESH_TOKEN_SECRET_KEY!,
+		{ expiresIn: "48h" }
+	);
+
+	// Delete any existing previous refresh tokens for the user and create a new one
+	await deleteRefreshTokenForUser(user.id);
+	const result = await saveRefreshToken(user.id, refreshToken);
+
+	// Handle possible error in token saving
+	if (!result) {
+		console.error("Error: Couldn't save the refresh token");
+		return res.status(500).json({ message: "Internal Server Error" });
+	}
+
+	// Set cookies and respond
+	res.cookie("accessToken", accessToken, {
+		httpOnly: true,
+		secure: true,
+		sameSite: "strict", // Added CSRF protection
+	});
+	res.cookie("refreshToken", refreshToken, {
+		httpOnly: true,
+		secure: true,
+		sameSite: "strict", // Added CSRF protection
+	});
+
+	res.status(200).json({
+		message: "Successful Login",
+		user: {
+			name: user.first_name,
+			apiRights: {
+				unlimitedReq: user.unlimited_req,
+				totalReqLeft: user.total_req_left,
+			},
+		},
+	});
 };
 
-//@ts-ignore
-export const signout = async (req, res) => {
-	const accessToken = req.cookies.accessToken;
+export const signout = async (req: Request, res: Response) => {
 	const refreshToken = req.cookies.refreshToken;
+
 	// If there's a refresh token, delete it from the database
-	if (accessToken || refreshToken) {
+	if (refreshToken) {
 		try {
 			await deleteRefreshToken(refreshToken);
 		} catch (error) {
