@@ -6,17 +6,6 @@ import { verifyJWTToken } from "./validateTokens";
 
 dotenv.config();
 
-interface User {
-	id: number;
-	first_name: string;
-	last_name: string;
-	email: string;
-	password_hash: string;
-	is_activated: boolean;
-	unlimited_req: boolean;
-	total_req_left: number;
-}
-
 export const authenticateToken = async (
 	req: Request,
 	res: Response,
