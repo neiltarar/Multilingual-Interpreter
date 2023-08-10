@@ -32,10 +32,15 @@ export const signin = async (req: Request, res: Response) => {
 			.json({ message: "User is not activated by the admin" });
 	}
 
-	// Check if the password is correct
-	const isPasswordValid = await bcrypt.compare(password, user.password_hash);
-	if (!isPasswordValid) {
-		return res.status(401).json({ message: "Unauthorised" });
+	// Password validation
+	try {
+		const isPasswordValid = await bcrypt.compare(password, user.password_hash);
+		if (!isPasswordValid) {
+			return res.status(401).json({ message: "Unauthorized" });
+		}
+	} catch (err) {
+		console.error("Error during password comparison:", err);
+		return res.status(500).json({ message: "Internal Server Error" });
 	}
 
 	// Create JWT tokens
@@ -55,13 +60,15 @@ export const signin = async (req: Request, res: Response) => {
 		{ expiresIn: "48h" }
 	);
 
-	// Delete any existing previous refresh tokens for the user and create a new one
-	await deleteRefreshTokenForUser(user.id);
-	const result = await saveRefreshToken(user.id, refreshToken);
-
-	// Handle possible error in token saving
-	if (!result) {
-		console.error("Error: Couldn't save the refresh token");
+	// Refresh token management
+	try {
+		await deleteRefreshTokenForUser(user.id);
+		const result = await saveRefreshToken(user.id, refreshToken);
+		if (!result) {
+			throw new Error("Failed to save refresh token");
+		}
+	} catch (err) {
+		console.error("Error managing refresh tokens:", err);
 		return res.status(500).json({ message: "Internal Server Error" });
 	}
 
