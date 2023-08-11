@@ -44,7 +44,7 @@ const GPTResponseText: React.FC<GPTResponseTextProps> = ({
 						value={transcription
 							.split(" ")
 							.reduce((acc: string, word: string, i: number) => {
-								return acc + word + (i % 50 === 0 ? "\n" : " ");
+								return acc + word + (i % 50 === 0 ? "" : " ");
 							}, "")}
 						inputProps={{
 							readOnly: true,

@@ -2,21 +2,25 @@ import { createTheme } from "@mui/material/styles";
 
 const myTheme = createTheme({
 	palette: {
+		mode: "light",
 		primary: {
-			main: "#007AFF", // iOS Blue
+			main: "#007AFF",
+			contrastText: "#FFFFFF",
 		},
 		secondary: {
-			main: "#34C759", // iOS Green
+			main: "#34C759",
+			contrastText: "#FFFFFF",
 		},
 		error: {
-			main: "#FF3B30", // iOS Red
+			main: "#FF3B30",
 		},
 		background: {
-			default: "#F0F0F0", // Light Gray
+			default: "#F0F0F0",
+			paper: "#FFFFFF", // Surface color
 		},
 		text: {
-			primary: "#000000", // Black
-			secondary: "#8E8E93", // iOS Gray
+			primary: "#000000",
+			secondary: "#8E8E93",
 		},
 	},
 	typography: {
@@ -25,7 +29,8 @@ const myTheme = createTheme({
 		h1: {
 			fontSize: "2rem",
 			fontWeight: "bold",
-			color: "#000000", // Black
+			color: "#000000",
+			textShadow: "1px 1px 2px rgba(0, 0, 0, 0.1)", // subtle shadow
 		},
 		h2: {
 			fontSize: "1.5rem",
@@ -69,6 +74,23 @@ const myTheme = createTheme({
 			fontSize: "0.875rem",
 			fontWeight: "bold",
 			color: "#007AFF", // iOS Blue
+		},
+	},
+	components: {
+		// Rounded corners
+		MuiButton: {
+			styleOverrides: {
+				root: {
+					borderRadius: "12px",
+				},
+			},
+		},
+		MuiPaper: {
+			styleOverrides: {
+				root: {
+					borderRadius: "12px",
+				},
+			},
 		},
 	},
 });
