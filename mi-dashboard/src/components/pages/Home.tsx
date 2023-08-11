@@ -6,7 +6,7 @@ import { useAuth } from "../../contexts/AuthContext";
 import DefaultLayout from "../Layout/DefaultLayout";
 import SliderBar from "../Layout/SliderBar";
 import FormControls from "../Layout/FormControls";
-import PressToSpeakButton from "../Layout/PressToSpeakButton";
+import PromptInput from "../Layout/PromptInput";
 import GPTResponseText from "../Layout/GPTResponseText";
 import soundWaveGif from "../../assets/waves.gif";
 import "../../App.css";
@@ -35,6 +35,7 @@ interface VoiceContextType {
 		selectedTranscriptionSpeed: string
 	) => Promise<void>;
 	handleButtonRelease: () => void;
+	handleSubmit: () => Promise<void>;
 	isRecording: boolean;
 	isWaiting: boolean;
 	setIsWaiting: (value: boolean) => void;
@@ -43,6 +44,7 @@ interface VoiceContextType {
 const Home: React.FC = () => {
 	const navigate = useNavigate();
 	const { currentUser } = useAuth() as AuthContextType;
+	const [inputValue, setInputValue] = useState("");
 	const [selectedLanguage, setSelectedLanguage] = useState("English");
 	const [selectedLanguage2, setSelectedLanguage2] = useState("Turkish");
 	const [selectedFeature, setSelectedFeature] = useState("transcribe");
@@ -55,6 +57,7 @@ const Home: React.FC = () => {
 		transcription,
 		handleButtonPress,
 		handleButtonRelease,
+		handleSubmit,
 		isWaiting,
 	} = useVoice() as VoiceContextType;
 
@@ -132,7 +135,7 @@ const Home: React.FC = () => {
 				/>
 				{((currentUser && currentUser.user.apiRights.totalReqLeft > 0) ||
 					currentUser?.user.apiRights.unlimitedReq) && (
-					<PressToSpeakButton
+					<PromptInput
 						isWaiting={isWaiting}
 						handleButtonPress={handleButtonPress}
 						selectedLanguage={selectedLanguage}
@@ -140,6 +143,9 @@ const Home: React.FC = () => {
 						selectedFeature={selectedFeature}
 						selectedTranscriptionSpeed={selectedTranscriptionSpeed}
 						handleButtonRelease={handleButtonRelease}
+						inputValue={inputValue}
+						setInputValue={setInputValue}
+						handleSubmit={handleSubmit}
 					/>
 				)}
 				<GPTResponseText transcription={transcription} isWaiting={isWaiting} />
