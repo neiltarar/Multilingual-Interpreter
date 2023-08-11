@@ -183,12 +183,6 @@ export const VoiceProvider: React.FC<{ children: React.ReactNode }> = ({
 			console.error("Error sending prompt:", error);
 			signout();
 		}
-		console.log(
-			promptInput,
-			selectedLanguage,
-			selectedLanguage2,
-			selectedFeature
-		);
 	};
 
 	const value = {
