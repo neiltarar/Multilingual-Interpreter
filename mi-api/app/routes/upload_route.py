@@ -10,7 +10,7 @@ upload_bp = Blueprint('upload_bp', __name__)  # Creating a Blueprint
 speech_recogniser = sr.Recognizer()
 
 @upload_bp.route('/api/upload', methods=['POST'])
-def upload_route():
+def upload_voice_route():
     if 'recordedSound' in request.files:
         audio_file = request.files['recordedSound']
         selected_language = request.form['selectedLanguage'].lower()
@@ -68,3 +68,47 @@ def upload_route():
             return jsonify({"message": "I am sorry I didn't catch what you said\nOzur dilerim ne soyledigini anlayamadim!"})
     else:
         return jsonify({'error': 'No audio file found'})
+    
+@upload_bp.route('/api/prompt', methods=['POST'])
+def upload_text_prompt_route():
+        selected_language = request.form['selectedLanguage'].lower()
+        selected_language2 = request.form['selectedLanguage2'].lower()
+        selected_feature = request.form['selectedFeature'].lower()
+        text = request.form['promptInput']
+
+        print("selected feature: " + selected_feature)
+        print(selected_language, selected_language2)
+
+        try:
+            if selected_feature == 'transcribe':
+                if(len(text.split()) > 20):
+                    new_text = add_newline_every_20_words(text)
+                    return jsonify({"message": new_text})
+                print('transcription has been sent')
+                return jsonify({"message": text})
+            elif selected_feature == 'gpthelper':
+                gpt_answer_object = gpt_helper(text)
+                gpt_answer = gpt_answer_object.choices[0].text.strip() 
+                return jsonify({'message':f'GPT: {gpt_answer}'})
+            elif selected_feature == 'imagegenerator':
+                gpt_image_url = image_generation(text)
+                return jsonify({'message': gpt_image_url})
+
+            translated_text_object = translation(selected_language, selected_language2, text)
+            translated_text = translated_text_object.choices[0].text.strip() 
+            if(len(translated_text.split()) > 20):
+                print('translation has been sent')
+                return jsonify({'message':f'Original: {text}\nTranslation: {translated_text}'})
+            
+            print('translation has been sent')
+            return jsonify({'message':f'Original: {text}\nTranslation: {translated_text}'})
+        
+        except sr.UnknownValueError:
+            return jsonify({"message":"Couldn't understand your speech"})
+        except sr.RequestError as e:
+            print(f"Error: {e}")
+            return jsonify({"message": "Couldn't understand your speech"})
+        except Exception as e:
+            print(f"Error as exeption: {e}")
+            return jsonify({"message": "I am sorry I didn't catch what you said\nOzur dilerim ne soyledigini anlayamadim!"})
+ 
