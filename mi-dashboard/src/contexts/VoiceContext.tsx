@@ -163,7 +163,6 @@ export const VoiceProvider: React.FC<{ children: React.ReactNode }> = ({
 			await axios
 				.post("/api/prompt", formData)
 				.then((res) => {
-					console.log("response", res);
 					if (!res.data.apiStatus) {
 						const responseMessage = res.data.message;
 						setTranscription(responseMessage);

@@ -3,11 +3,11 @@ from flask_cors import CORS
 from dotenv import load_dotenv
 from config import MAX_CONTENT_LENGTH
 
-# import routes
-from routes.upload_route import upload_bp
-
 # load env variables
 load_dotenv()
+
+# import routes
+from routes.upload_route import upload_bp
 
 app = Flask(__name__)
 
