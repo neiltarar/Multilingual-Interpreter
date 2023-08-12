@@ -1,18 +1,7 @@
 import http from "http";
-import { userModels } from "../models/userModel";
+import { Response } from "express";
 
-interface User {
-	id: number;
-	first_name: string;
-	last_name: string;
-	email: string;
-	password_hash: string;
-	is_activated: boolean;
-	unlimited_req: boolean;
-	total_req_left: number;
-}
-
-export const uploadPrompt = async (req: any, res: any): Promise<any> => {
+export const uploadPrompt = async (req: any, res: Response): Promise<any> => {
 	// Validate the user object
 	if (!req.user) {
 		console.error("User object is not correctly set.");
@@ -20,40 +9,114 @@ export const uploadPrompt = async (req: any, res: any): Promise<any> => {
 			message: "User object is not correctly set.",
 		});
 	}
+	if (!req.user.unlimitedReq) {
+		const {
+			total_req_left: totalApiRequestsLeft,
+			first_name: firstName,
+			unlimited_req: unlimitedReq,
+		} = req.userWithNewApiReqRights;
 
-	const user = req.user;
-	const userId = user.userId;
-	const unlimitedApiRights = user.unlimitedReq;
-	if (!unlimitedApiRights) {
-		const userWithNewApiReqRights = await userModels.apiRequestDeduction(
-			userId
+		try {
+			if (!unlimitedReq && totalApiRequestsLeft === 0) {
+				return res.status(429).json({
+					user: {
+						name: firstName,
+						apiRights: {
+							unlimitedReq: unlimitedReq,
+							totalReqLeft: totalApiRequestsLeft,
+						},
+					},
+					message:
+						"You have exhausted all your API request tokens.\nContact the admin on neiltarar@gmail.com",
+				});
+			}
+
+			const proxy = await http.request(
+				{
+					host: "localhost",
+					port: 5000,
+					path: "/api/prompt",
+					method: "POST",
+					headers: req.headers,
+				},
+				async (response) => {
+					const chunks: any[] = [];
+					response.on("data", (chunk) => chunks.push(chunk));
+					response.on("end", () => {
+						//@ts-ignore
+						const responseBody = Buffer.concat(chunks);
+						// Try to parse the response as JSON
+						let responseData;
+						try {
+							responseData = JSON.parse(responseBody.toString());
+						} catch (error) {
+							// If parsing as JSON fails, return a generic error (this shouldn't happen since all routes return JSON)
+							console.error(
+								"Failed to parse proxy server response as JSON:",
+								error
+							);
+							return res
+								.status(500)
+								.json({ message: "Proxy server returned unexpected data." });
+						}
+						// Modify the response
+						responseData.user = {
+							name: firstName,
+							apiRights: {
+								unlimitedReq: unlimitedReq,
+								totalReqLeft: totalApiRequestsLeft,
+							},
+						};
+						res.json(responseData);
+					});
+				}
+			);
+			req.pipe(proxy);
+		} catch (error) {
+			console.error("Error deducting API request count for user:", error);
+			return res.status(500).send({ message: "Internal server error." });
+		}
+	} else {
+		const proxy = await http.request(
+			{
+				host: "localhost",
+				port: 5000,
+				path: "/api/prompt",
+				method: "POST",
+				headers: req.headers,
+			},
+			async (response) => {
+				const chunks: any[] = [];
+				response.on("data", (chunk) => chunks.push(chunk));
+				response.on("end", () => {
+					//@ts-ignore
+					const responseBody = Buffer.concat(chunks);
+					// Try to parse the response as JSON
+					let responseData;
+					try {
+						responseData = JSON.parse(responseBody.toString());
+					} catch (error) {
+						// If parsing as JSON fails, return a generic error (this shouldn't happen since all routes return JSON)
+						console.error(
+							"Failed to parse proxy server response as JSON:",
+							error
+						);
+						return res
+							.status(500)
+							.json({ message: "Proxy server returned unexpected data." });
+					}
+					// Modify the response
+					responseData.user = {
+						name: req.user.name,
+						apiRights: {
+							unlimitedReq: req.user.unlimitedReq,
+							totalReqLeft: 0,
+						},
+					};
+					res.json(responseData);
+				});
+			}
 		);
-		if (
-			!userWithNewApiReqRights ||
-			userWithNewApiReqRights.total_req_left === 0
-		) {
-			// User has no more requests left, return an error response
-			res.status(200).send({
-				apiStatus: false,
-				message:
-					"You have used up all your requests. Please upgrade your plan or wait until your quota is renewed.",
-			});
-			return;
-		}
+		req.pipe(proxy);
 	}
-
-	const proxy = await http.request(
-		{
-			host: "localhost",
-			port: 5000,
-			path: "/api/prompt",
-			method: "POST",
-			headers: req.headers,
-		},
-		(response) => {
-			response.pipe(res);
-		}
-	);
-
-	req.pipe(proxy);
 };

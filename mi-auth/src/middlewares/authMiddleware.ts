@@ -50,6 +50,8 @@ export const authenticateToken = async (
 				res.cookie("accessToken", newAccessToken, {
 					httpOnly: true,
 					secure: true,
+					sameSite: "strict", // Added CSRF protection
+					maxAge: 10 * 60 * 1000, // 10 minutes
 				});
 				//@ts-ignore
 				req.user = user;

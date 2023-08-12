@@ -67,38 +67,29 @@ export const VoiceProvider: React.FC<{ children: React.ReactNode }> = ({
 					setIsWaiting(true);
 
 					try {
-						// TODO handle this on the BE later. We are doing the check regardless so no safety issue
-						if (currentUser && currentUser.user.apiRights.totalReqLeft !== 0) {
-							const updatedCurrentUser = {
-								user: {
-									name: currentUser.user.name,
-									apiRights: {
-										totalReqLeft: currentUser.user.apiRights.totalReqLeft - 1,
-										unlimitedReq: currentUser.user.apiRights.unlimitedReq,
-									},
-								},
-							};
-
-							localStorage.setItem(
-								"currentUser",
-								JSON.stringify(updatedCurrentUser)
-							);
-							setCurrentUser(updatedCurrentUser);
-						}
-						// ABOVE WILL BE HANDLED IN THE BE LATER!!!
-
-						// Send the recorded data to the server using Axios
 						await axios
 							.post("/api/upload", formData)
 							.then((res) => {
-								if (!res.data.apiStatus) {
+								if (res.status === 200) {
+									const { user } = res.data;
+									setCurrentUser({
+										user: {
+											name: user.name,
+											apiRights: user.apiRights,
+										},
+									});
+									localStorage.setItem(
+										"currentUser",
+										JSON.stringify({
+											user: {
+												name: user.name,
+												apiRights: user.apiRights,
+											},
+										})
+									);
 									const transcriptedSpeech = res.data.message;
 									setTranscription(transcriptedSpeech);
 									setTimeout(() => setIsWaiting(false), 500);
-								} else {
-									const transcriptedSpeech = res.data.message;
-									setTranscription(transcriptedSpeech);
-									setIsWaiting(true);
 								}
 							})
 							.catch((err) => {
@@ -141,36 +132,29 @@ export const VoiceProvider: React.FC<{ children: React.ReactNode }> = ({
 		formData.append("promptInput", promptInput);
 		setIsWaiting(true);
 		try {
-			// TODO handle this on the BE later. We are doing the check regardless so no safety issue
-			if (currentUser && currentUser.user.apiRights.totalReqLeft !== 0) {
-				const updatedCurrentUser = {
-					user: {
-						name: currentUser.user.name,
-						apiRights: {
-							totalReqLeft: currentUser.user.apiRights.totalReqLeft - 1,
-							unlimitedReq: currentUser.user.apiRights.unlimitedReq,
-						},
-					},
-				};
-
-				localStorage.setItem("currentUser", JSON.stringify(updatedCurrentUser));
-				setCurrentUser(updatedCurrentUser);
-			}
-			// ABOVE WILL BE HANDLED IN THE BE LATER!!!
-
-			// Send the recorded data to the server using Axios
-			setIsWaiting(true);
 			await axios
 				.post("/api/prompt", formData)
 				.then((res) => {
-					if (!res.data.apiStatus) {
+					if (res.status === 200) {
+						const { user } = res.data;
+						setCurrentUser({
+							user: {
+								name: user.name,
+								apiRights: user.apiRights,
+							},
+						});
+						localStorage.setItem(
+							"currentUser",
+							JSON.stringify({
+								user: {
+									name: user.name,
+									apiRights: user.apiRights,
+								},
+							})
+						);
 						const responseMessage = res.data.message;
 						setTranscription(responseMessage);
 						setTimeout(() => setIsWaiting(false), 500);
-					} else {
-						const transcriptedSpeech = res.data.message;
-						setTranscription(transcriptedSpeech);
-						setIsWaiting(true);
 					}
 				})
 				.catch((err) => {
