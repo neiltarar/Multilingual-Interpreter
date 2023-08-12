@@ -77,7 +77,7 @@ export const signin = async (req: Request, res: Response) => {
 		httpOnly: true,
 		secure: true,
 		sameSite: "strict", // Added CSRF protection
-		maxAge: 10 * 60 * 1000, // 10 minutes
+		maxAge: 48 * 60 * 60 * 1000, // 48 hours
 	});
 	res.cookie("refreshToken", refreshToken, {
 		httpOnly: true,
