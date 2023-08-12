@@ -55,8 +55,26 @@ export const userModels = {
 			} else {
 				return null;
 			}
-		} catch (err) {
-			console.error(`Error fetching user by email ${email}:`, err);
+		} catch (error) {
+			console.error(`Error fetching user by email ${email}:`, error);
+			throw new Error("Database error when fetching user");
+		}
+	},
+
+	findUserById: async (id: number): Promise<User | null> => {
+		try {
+			const result: any[] | undefined = await db(
+				"SELECT unlimited_req, total_req_left FROM users WHERE id=$1",
+				[id]
+			);
+			if (result && result.length > 0) {
+				const user: User = result[0];
+				return user;
+			} else {
+				return null;
+			}
+		} catch (error) {
+			console.error(`Error fetching user by id ${id}:`, error);
 			throw new Error("Database error when fetching user");
 		}
 	},
@@ -69,7 +87,7 @@ export const userModels = {
 				AND total_req_left > 0 
 				THEN total_req_left - 1 
 				ELSE total_req_left END 
-				WHERE id = $1 RETURNING id, total_req_left`,
+				WHERE id = $1 RETURNING first_name, unlimited_req, total_req_left`,
 				[id]
 			);
 			if (result && result.length > 0) {
