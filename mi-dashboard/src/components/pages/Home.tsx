@@ -47,7 +47,7 @@ const Home: React.FC = () => {
 	const [inputValue, setInputValue] = useState("");
 	const [selectedLanguage, setSelectedLanguage] = useState("English");
 	const [selectedLanguage2, setSelectedLanguage2] = useState("Turkish");
-	const [selectedFeature, setSelectedFeature] = useState("transcribe");
+	const [selectedFeature, setSelectedFeature] = useState("gptHelper");
 	const [selectedTranscriptionSpeed, setSelectedTranscriptionSpeed] = useState<
 		string | null
 	>("base");
