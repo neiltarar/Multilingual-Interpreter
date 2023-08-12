@@ -51,7 +51,7 @@ export const authenticateToken = async (
 					httpOnly: true,
 					secure: true,
 					sameSite: "strict", // Added CSRF protection
-					maxAge: 10 * 60 * 1000, // 10 minutes
+					maxAge: 48 * 60 * 60 * 1000, // 48 hours
 				});
 				//@ts-ignore
 				req.user = user;
