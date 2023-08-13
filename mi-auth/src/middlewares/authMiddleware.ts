@@ -25,6 +25,7 @@ export const authenticateToken = async (
 		);
 		//@ts-ignore
 		req.user = user;
+
 		next();
 	} catch (err) {
 		if (err instanceof jwt.TokenExpiredError) {
@@ -36,15 +37,21 @@ export const authenticateToken = async (
 					refreshToken,
 					process.env.REFRESH_TOKEN_SECRET_KEY!
 				);
-
+				// Create JWT tokens
+				const payload = {
+					//@ts-ignore
+					userId: user.userId,
+					//@ts-ignore
+					name: user.name,
+					//@ts-ignore
+					unlimitedReq: user.unlimitedReq,
+				};
 				const newAccessToken = jwt.sign(
-					{
-						userId: user.id,
-						name: user.first_name,
-						unlimitedReq: user.unlimited_req,
-					},
+					payload,
 					process.env.ACCESS_TOKEN_SECRET_KEY!,
-					{ expiresIn: "10m" }
+					{
+						expiresIn: "10m",
+					}
 				);
 
 				res.cookie("accessToken", newAccessToken, {

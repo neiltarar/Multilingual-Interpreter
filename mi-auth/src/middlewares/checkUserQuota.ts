@@ -9,13 +9,11 @@ export const checkUserQuota = async (
 	//@ts-ignore
 	const { userId } = req.user;
 	const foundUser = await userModels.findUserById(userId);
-
 	if (!foundUser) {
 		return res.status(404).send({ message: "User not found" });
 	}
-
-	const unlimitedReq = foundUser.unlimited_req;
-	const totalReqLeft = foundUser.total_req_left;
+	const { unlimited_req: unlimitedReq, total_req_left: totalReqLeft } =
+		foundUser;
 
 	if (!unlimitedReq && totalReqLeft <= 0) {
 		return res.status(429).send({
@@ -38,7 +36,7 @@ export const checkUserQuota = async (
 			}
 
 			//@ts-ignore
-			req.userWithNewApiReqRights = userWithNewApiReqRights;
+			req.user = userWithNewApiReqRights;
 			next();
 		} catch (error) {
 			console.error("Error deducting API request count for user:", error);
