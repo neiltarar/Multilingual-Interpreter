@@ -37,7 +37,7 @@ def upload_voice_route():
                     return jsonify({"message": text})
                 elif selected_feature == 'gpthelper':
                     gpt_answer_object = gpt_helper(text)
-                    gpt_answer = gpt_answer_object.choices[0].text.strip() 
+                    gpt_answer = gpt_answer_object.choices[0].message.content.strip() 
                     delete_specific_files(files_to_delete)
                     return jsonify({'message':f'GPT:\n{gpt_answer}'})
                 elif selected_feature == 'imagegenerator':
@@ -46,7 +46,7 @@ def upload_voice_route():
                     return jsonify({'message': gpt_image_url})
                 elif selected_feature == 'translate':
                     translated_text_object = translation(selected_language, selected_language2, text)
-                    translated_text = translated_text_object.choices[0].text.strip() 
+                    translated_text = translated_text_object.choices[0].message.content.strip() 
                     if(len(translated_text.split()) > 20):
                         print('translation has been sent')
                         return jsonify({'message':f'{translated_text}'})
@@ -90,14 +90,14 @@ def upload_text_prompt_route():
                 return jsonify({"message": text})
             elif selected_feature == 'gpthelper':
                 gpt_answer_object = gpt_helper(text)
-                gpt_answer = gpt_answer_object.choices[0].text.strip() 
+                gpt_answer = gpt_answer_object.choices[0].message.content.strip() 
                 return jsonify({'message':f'GPT:\n{gpt_answer}'})
             elif selected_feature == 'imagegenerator':
                 gpt_image_url = image_generation(text)
                 return jsonify({'message': gpt_image_url})
             elif selected_feature == 'translate':
                 translated_text_object = translation(selected_language, selected_language2, text)
-                translated_text = translated_text_object.choices[0].text.strip() 
+                translated_text = translated_text_object.choices[0].message.content.strip() 
                 if(len(translated_text.split()) > 20):
                     print('translation has been sent')
                     return jsonify({'message':f'{translated_text}'})
