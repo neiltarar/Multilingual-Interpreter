@@ -1,5 +1,5 @@
 import { Response } from "express";
-import { GPTConversation } from "../utils/GPTService";
+import { GPTConversation } from "../services/GPTService";
 
 export const textPrompt = async (req: any, res: Response): Promise<any> => {
 	// Validate the user object

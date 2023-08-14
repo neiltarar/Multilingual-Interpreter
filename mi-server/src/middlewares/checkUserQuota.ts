@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { GPTConversation } from "../utils/GPTService";
+import { GPTConversation } from "../services/GPTService";
 import { userModels } from "../models/userModel";
 
 export const checkUserQuota = async (
