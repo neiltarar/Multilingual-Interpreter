@@ -64,7 +64,7 @@ export const userModels = {
 	findUserById: async (id: number): Promise<User | null> => {
 		try {
 			const result: any[] | undefined = await db(
-				"SELECT unlimited_req, total_req_left FROM users WHERE id=$1",
+				"SELECT first_name, unlimited_req, total_req_left FROM users WHERE id=$1",
 				[id]
 			);
 			if (result && result.length > 0) {

@@ -1,11 +1,13 @@
 import express from "express";
 import { uploadVoice } from "../controller/voiceUploadControllers";
-import { uploadPrompt } from "../controller/promptUploadControllers";
+import { textPrompt } from "../controller/promptUploadControllers";
 import { checkUserQuota } from "../middlewares/checkUserQuota";
+import multer from "multer";
 
 const router = express.Router();
+const upload = multer();
 
 router.post("/upload", checkUserQuota, uploadVoice);
-router.post("/prompt", checkUserQuota, uploadPrompt);
+router.post("/prompt-text", checkUserQuota, upload.none(), textPrompt);
 
 export default router;
