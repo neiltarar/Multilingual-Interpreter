@@ -1,6 +1,6 @@
 import express from "express";
-import { uploadVoice } from "../controller/voiceUploadControllers";
-import { textPrompt } from "../controller/promptUploadControllers";
+import { uploadVoice } from "../controllers/voiceUploadControllers";
+import { textPrompt } from "../controllers/promptUploadControllers";
 import { checkUserQuota } from "../middlewares/checkUserQuota";
 import multer from "multer";
 
