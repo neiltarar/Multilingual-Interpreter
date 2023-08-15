@@ -1,17 +1,24 @@
 import http from "http";
 import { Response } from "express";
 
-export const uploadVoice = async (req: any, res: Response): Promise<void> => {
+export const voicePromt = async (req: any, res: Response): Promise<void> => {
+	// Validate the user object
+	if (!req.user) {
+		console.error("User object is not correctly set.");
+		res.status(500).json({
+			message: "User object is not correctly set.",
+		});
+	}
+	const { name: userName, unlimitedReq } = req.user;
+
 	try {
-		// Validate the user object
-		//@ts-ignore
-		if (!req.user) {
-			console.error("User object is not correctly set.");
-			res.status(500).json({
-				message: "User object is not correctly set.",
-			});
-		}
-		//@ts-ignore
+		const {
+			selectedLanguage,
+			selectedLanguage2,
+			selectedFeature,
+			promptInput,
+		} = req.body;
+		console.log("req.body", req.body);
 		if (!req.user.unlimitedReq) {
 			const {
 				total_req_left: totalApiRequestsLeft,

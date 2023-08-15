@@ -18,11 +18,12 @@ export const textPrompt = async (req: any, res: Response): Promise<any> => {
 			selectedFeature,
 			promptInput,
 		} = req.body;
+
 		let Conversation;
+
 		if (!unlimitedReq) {
-			console.log(req.user);
 			Conversation = new GPTConversation(
-				unlimitedReq,
+				req.user.unlimited_req,
 				req.user.total_req_left,
 				req.user.first_name,
 				promptInput,
@@ -54,7 +55,9 @@ export const textPrompt = async (req: any, res: Response): Promise<any> => {
 						name: req.user.name,
 						apiRights: {
 							unlimitedReq: req.user.unlimitedReq,
-							totalReqLeft: 0,
+							totalReqLeft: req.user.total_req_left
+								? req.user.total_req_left
+								: 0,
 						},
 					},
 					message: "Transcription Feature is for speech only.",

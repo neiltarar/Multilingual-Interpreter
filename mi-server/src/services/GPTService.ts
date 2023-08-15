@@ -92,8 +92,7 @@ export class GPTConversation {
 				message: this.gptResponse,
 			};
 			return responseData;
-		} else if (this.totalApiRequestsLeft <= 0) {
-			console.log("total req in GPT service: ", this.totalApiRequestsLeft);
+		} else {
 			const responseData = {
 				user: {
 					name: this.userName,
@@ -102,8 +101,7 @@ export class GPTConversation {
 						totalReqLeft: this.totalApiRequestsLeft,
 					},
 				},
-				message:
-					"You have exhausted all your API request tokens.\nContact the admin on neiltarar@gmail.com",
+				message: this.gptResponse,
 			};
 			return responseData;
 		}

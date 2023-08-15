@@ -13,13 +13,13 @@ export const checkUserQuota = async (
 	if (!foundUser) {
 		return res.status(404).send({ message: "User not found" });
 	}
+
 	const {
 		first_name: userName,
 		unlimited_req: unlimitedReq,
 		total_req_left: totalReqLeft,
 	} = foundUser;
-
-	if (!unlimitedReq && totalReqLeft <= 0) {
+	if (!unlimitedReq && totalReqLeft < 1) {
 		const Conversation = new GPTConversation(
 			unlimitedReq,
 			totalReqLeft,

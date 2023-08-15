@@ -68,7 +68,7 @@ export const VoiceProvider: React.FC<{ children: React.ReactNode }> = ({
 
 					try {
 						await axios
-							.post("/api/upload", formData)
+							.post("/api/prompt-voice", formData)
 							.then((res) => {
 								if (res.status === 200) {
 									const { user } = res.data;
