@@ -3,6 +3,7 @@ import { ThemeProvider } from "@mui/material/styles";
 import { Box, Typography } from "@mui/material";
 import myTheme from "./myTheme";
 import Footer from "./Footer";
+import Navbar from "./NavBar";
 import LogoutButton from "../Auth/LogoutButton";
 
 interface DefaultLayoutProps {
@@ -10,6 +11,10 @@ interface DefaultLayoutProps {
 }
 
 const DefaultLayout: React.FC<DefaultLayoutProps> = ({ children }) => {
+	const handleNewConversation = () => {
+		// logic to start a new conversation
+	};
+
 	return (
 		<ThemeProvider theme={myTheme}>
 			<Box
@@ -21,6 +26,7 @@ const DefaultLayout: React.FC<DefaultLayoutProps> = ({ children }) => {
 				alignItems='center'
 				width='100%'
 			>
+				<Navbar onNewConversation={handleNewConversation} />
 				<Box
 					className='main-page'
 					sx={{
@@ -44,9 +50,7 @@ const DefaultLayout: React.FC<DefaultLayoutProps> = ({ children }) => {
 								sm: "1rem 5rem 0 0",
 							},
 						}}
-					>
-						<LogoutButton />
-					</Box>
+					></Box>
 					<Typography variant='h2' gutterBottom>
 						Speak2GPT
 					</Typography>

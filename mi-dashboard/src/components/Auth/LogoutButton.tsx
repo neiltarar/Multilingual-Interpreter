@@ -6,19 +6,20 @@ import { useAuth } from "../../contexts/AuthContext";
 import myTheme from "../Layout/myTheme";
 
 const StyledSignOutButton = styled(Button)(({ theme }) => ({
-	"color": theme.palette.primary.main,
-	"borderColor": theme.palette.primary.main,
-	"fontSize": "0.8rem",
+	"color": "#000",
+	"border": "none",
+	"outline": "none",
+	"boxShadow": "none",
+	"borderRadius": "1.5rem",
+	"margin": "0.1rem 0.5rem",
+	"fontSize": "1rem",
 	"fontWeight": "bold",
 	"height": "2.5rem",
-	"textTransform": "none",
-	"boxShadow": "5px 5px 15px #b8b9be, -5px -5px 15px #ffffff",
 	"&:hover": {
-		backgroundColor: theme.palette.secondary.main,
-		color: theme.palette.common.white,
-		borderColor: theme.palette.secondary.main,
-		transform: "scale(1.05)",
+		transform: "scale(1.15)",
 		boxShadow: "none",
+		border: "none",
+		outline: "none",
 	},
 	"&:active": {
 		boxShadow: "inset 3px 3px 3px #b8b9be, inset -3px -3px 3px #ffffff",

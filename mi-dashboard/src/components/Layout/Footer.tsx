@@ -9,6 +9,7 @@ const Footer: React.FC = () => {
 				color: "white",
 				p: 2,
 				width: "100vw",
+				minWidth: "390px",
 				boxShadow: "0px 3px 10px rgba(0, 0, 0, 0.7)", // slight shadow
 				mt: "auto",
 			}}
