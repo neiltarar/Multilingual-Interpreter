@@ -44,7 +44,7 @@ export const sendVoiceData = async (
 
 	try {
 		const response = await axios.post(
-			"http://127.0.0.1:5000/api/prompt-voice",
+			`${process.env.MICROSERVICE_SERVER_IP}/api/prompt-voice`,
 			form,
 			{
 				headers: {

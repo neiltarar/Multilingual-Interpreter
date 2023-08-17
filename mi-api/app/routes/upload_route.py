@@ -14,13 +14,9 @@ def upload_voice_route():
     if 'recordedSound' in request.files:
         audio_file = request.files['recordedSound']
         selected_language = request.form['selectedLanguage'].lower()
-        # selected_language2 = request.form['selectedLanguage2'].lower()
-        # selected_feature = request.form['selectedFeature'].lower()
         transcription_model = request.form['selectedTranscriptionSpeed'].lower()
-        print("request files: ",request.files)
         file_path, error, files_to_delete = process_audio_file(audio_file)
-        # print("selected feature: " + selected_feature)
-        # print(selected_language, selected_language2)
+   
         if error:
             delete_specific_files(files_to_delete)
             return jsonify({'error': error})
