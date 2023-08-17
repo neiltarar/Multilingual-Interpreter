@@ -118,6 +118,7 @@ const PromptInput: React.FC<PromptInputProps> = ({
 										backgroundColor: theme.palette.secondary.light, // hover background color
 									},
 								}}
+								disabled={isWaiting}
 							>
 								<SendRoundedIcon />
 							</IconButton>
