@@ -49,6 +49,9 @@ export const textPrompt = async (req: any, res: Response): Promise<any> => {
 			case "translate":
 				Conversation.translate().then((response) => res.json(response));
 				break;
+			case "imagegenerator":
+				Conversation.imageGenerator().then((response) => res.json(response));
+				break;
 			case "transcribe":
 				let responseData = {
 					user: {

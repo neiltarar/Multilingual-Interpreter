@@ -7,7 +7,7 @@ import multer from "multer";
 const router = express.Router();
 const upload = multer();
 
-router.post("/prompt-voice", checkUserQuota, upload.none(), voicePromt);
+router.post("/prompt-voice", checkUserQuota, voicePromt);
 router.post("/prompt-text", checkUserQuota, upload.none(), textPrompt);
 
 export default router;

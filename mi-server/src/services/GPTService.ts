@@ -1,4 +1,5 @@
 import axios from "axios";
+import { response } from "express";
 
 const CHAT_GPT_API_KEY = process.env.CHAT_GPT_API_KEY;
 
@@ -20,6 +21,7 @@ export class GPTConversation {
 	header: Record<string, string>;
 	gptTranslateData: Record<string, any>;
 	gptHelperData: Record<string, any>;
+	imageGeneratorData: Record<string, any>;
 
 	constructor(
 		isUnlimitedRequest: boolean = false,
@@ -38,10 +40,12 @@ export class GPTConversation {
 		this.sourceLanguage = sourceLanguage;
 		this.targetLanguage = targetLanguage;
 		this.gptResponse = "";
+
 		this.header = {
 			"Content-Type": "application/json",
 			"Authorization": `Bearer ${CHAT_GPT_API_KEY}`,
 		};
+
 		this.gptTranslateData = {
 			model: "gpt-4",
 			messages: [
@@ -61,6 +65,7 @@ export class GPTConversation {
 			frequency_penalty: 0.0,
 			presence_penalty: 0.0,
 		};
+
 		this.gptHelperData = {
 			model: "gpt-4",
 			messages: [
@@ -76,6 +81,12 @@ export class GPTConversation {
 			top_p: 1.0,
 			frequency_penalty: 0.0,
 			presence_penalty: 0.0,
+		};
+
+		this.imageGeneratorData = {
+			prompt: this.promptText,
+			n: 1,
+			size: "256x256",
 		};
 	}
 
@@ -132,6 +143,23 @@ export class GPTConversation {
 				{ headers: this.header }
 			);
 			this.gptResponse = response.data.choices[0].message.content.trim();
+			const responseData: Record<string, any> | undefined =
+				await this.#setResponseObject();
+			return responseData;
+		} catch (error) {
+			console.error("Error:", error);
+			throw new Error("An error occurred; contact the admin");
+		}
+	}
+
+	async imageGenerator(): Promise<string | any> {
+		try {
+			const response = await axios.post(
+				"https://api.openai.com/v1/images/generations",
+				this.imageGeneratorData,
+				{ headers: this.header }
+			);
+			this.gptResponse = response.data.data[0]["url"];
 			const responseData: Record<string, any> | undefined =
 				await this.#setResponseObject();
 			return responseData;

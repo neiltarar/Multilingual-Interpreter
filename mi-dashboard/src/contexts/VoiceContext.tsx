@@ -135,6 +135,7 @@ export const VoiceProvider: React.FC<{ children: React.ReactNode }> = ({
 			await axios
 				.post("/api/prompt-text", formData)
 				.then((res) => {
+					console.log(res);
 					if (res.status === 200) {
 						const { user } = res.data;
 						setCurrentUser({
