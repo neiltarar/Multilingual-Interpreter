@@ -52,7 +52,6 @@ def process_audio_file(audio_file):
     with open(converted_file_path, 'wb') as f:
         f.write(audio_data)
 
-    print(file_path, converted_file_path)
     return converted_file_path, None, [file_path, converted_file_path]
 
 def delete_specific_files(file_paths):
