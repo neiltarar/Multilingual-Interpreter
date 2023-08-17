@@ -161,6 +161,3 @@ cython_debug/
 .idea/
 
 **/node_modules
-
-# mi-api/app/uploads/
-**/uploads/
