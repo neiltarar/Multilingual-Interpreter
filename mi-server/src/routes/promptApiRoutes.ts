@@ -5,9 +5,15 @@ import { checkUserQuota } from "../middlewares/checkUserQuota";
 import multer from "multer";
 
 const router = express.Router();
-const upload = multer();
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
 
-router.post("/prompt-voice", checkUserQuota, voicePromt);
+router.post(
+	"/prompt-voice",
+	checkUserQuota,
+	upload.single("recordedSound"),
+	voicePromt
+);
 router.post("/prompt-text", checkUserQuota, upload.none(), textPrompt);
 
 export default router;

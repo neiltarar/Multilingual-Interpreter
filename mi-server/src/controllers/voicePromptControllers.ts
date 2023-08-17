@@ -1,5 +1,6 @@
-import http from "http";
 import { Response } from "express";
+import { GPTConversation } from "../services/GPTService";
+import { sendVoiceData } from "../utils/sendVoiceData";
 
 export const voicePromt = async (req: any, res: Response): Promise<void> => {
 	// Validate the user object
@@ -9,109 +10,97 @@ export const voicePromt = async (req: any, res: Response): Promise<void> => {
 			message: "User object is not correctly set.",
 		});
 	}
-	const { name: userName, unlimitedReq } = req.user;
 
 	try {
 		const {
 			selectedLanguage,
 			selectedLanguage2,
 			selectedFeature,
-			promptInput,
+			selectedTranscriptionSpeed,
 		} = req.body;
-		console.log("req.body", req.body);
-		if (!req.user.unlimitedReq) {
-			const {
-				total_req_left: totalApiRequestsLeft,
-				first_name: firstName,
-				unlimited_req: unlimitedReq,
-				//@ts-ignore
-			} = req.userWithNewApiReqRights;
 
-			const proxy = await http.request(
-				{
-					host: "localhost",
-					port: 5000,
-					path: "/api/upload",
-					method: "POST",
-					headers: req.headers,
-				},
-				async (response) => {
-					const chunks: any[] = [];
-					response.on("data", (chunk) => chunks.push(chunk));
-					response.on("end", () => {
-						const responseBody = Buffer.concat(chunks);
+		const { name: userName, unlimitedReq } = req.user;
 
-						// Try to parse the response as JSON
-						let responseData;
-						try {
-							responseData = JSON.parse(responseBody.toString());
-						} catch (error) {
-							// If parsing as JSON fails, return a generic error (this shouldn't happen since all routes return JSON)
-							console.error(
-								"Failed to parse proxy server response as JSON:",
-								error
-							);
-							return res
-								.status(500)
-								.json({ message: "Proxy server returned unexpected data." });
-						}
+		const { file: voiceFile } = req;
+		let promptInput;
+		let Conversation;
 
-						// Modify the response
-						responseData.user = {
-							name: firstName,
-							apiRights: {
-								unlimitedReq: unlimitedReq,
-								totalReqLeft: totalApiRequestsLeft,
-							},
-						};
-						res.json(responseData);
-					});
-				}
-			);
-			req.pipe(proxy);
+		const result = await sendVoiceData(
+			voiceFile,
+			selectedTranscriptionSpeed,
+			selectedLanguage
+		);
+
+		if (result.success) {
+			promptInput = result.data?.data.message;
 		} else {
-			const proxy = await http.request(
-				{
-					host: "localhost",
-					port: 5000,
-					path: "/api/upload",
-					method: "POST",
-					headers: req.headers,
-				},
-				async (response) => {
-					const chunks: any[] = [];
-					response.on("data", (chunk) => chunks.push(chunk));
-					response.on("end", () => {
-						const responseBody = Buffer.concat(chunks);
+			if (
+				result.error &&
+				result.error.response &&
+				result.error.response.status < 500
+			) {
+				// It's a client error
+				res
+					.status(result.error.response.status)
+					.json({ message: "Client error." });
+			} else {
+				throw new Error("Error during voice data processing.");
+			}
+		}
 
-						// Try to parse the response as JSON
-						let responseData;
-						try {
-							responseData = JSON.parse(responseBody.toString());
-						} catch (error) {
-							// If parsing as JSON fails, return a generic error (this shouldn't happen since all routes return JSON)
-							console.error(
-								"Failed to parse proxy server response as JSON:",
-								error
-							);
-							return res
-								.status(500)
-								.json({ message: "Proxy server returned unexpected data." });
-						}
-
-						// Modify the response
-						responseData.user = {
-							name: req.user.name,
-							apiRights: {
-								unlimitedReq: req.user.unlimitedReq,
-								totalReqLeft: 0,
-							},
-						};
-						res.json(responseData);
-					});
-				}
+		if (!unlimitedReq) {
+			Conversation = new GPTConversation(
+				unlimitedReq,
+				req.user.total_req_left,
+				userName,
+				promptInput,
+				selectedFeature,
+				selectedLanguage,
+				selectedLanguage2
 			);
-			req.pipe(proxy);
+		} else {
+			Conversation = new GPTConversation(
+				unlimitedReq,
+				req.user.total_req_left,
+				userName,
+				promptInput,
+				selectedFeature,
+				selectedLanguage,
+				selectedLanguage2
+			);
+		}
+
+		switch (selectedFeature.toLowerCase()) {
+			case "gpthelper":
+				Conversation.gptHelper().then((response) => res.json(response));
+				break;
+			case "translate":
+				Conversation.translate().then((response) => res.json(response));
+				break;
+			case "imagegenerator":
+				Conversation.imageGenerator().then((response) => res.json(response));
+				break;
+			case "transcribe":
+				let responseData = {
+					user: {
+						name: userName,
+						apiRights: {
+							unlimitedReq: unlimitedReq,
+							totalReqLeft: req.user.total_req_left
+								? req.user.total_req_left
+								: 0,
+						},
+					},
+					message: promptInput,
+				};
+
+				res.json(responseData);
+				break;
+			default:
+				res.json({
+					message: "Couldn't understand what you asked for",
+				});
+				break;
 		}
 	} catch (error) {
 		console.error("Error processing voice upload:", error);

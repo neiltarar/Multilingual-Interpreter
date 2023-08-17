@@ -9,7 +9,6 @@ export const textPrompt = async (req: any, res: Response): Promise<any> => {
 			message: "User object is not correctly set.",
 		});
 	}
-	const { name: userName, unlimitedReq } = req.user;
 
 	try {
 		const {
@@ -19,13 +18,15 @@ export const textPrompt = async (req: any, res: Response): Promise<any> => {
 			promptInput,
 		} = req.body;
 
+		const { name: userName, unlimitedReq } = req.user;
+		console.log(userName);
 		let Conversation;
 
 		if (!unlimitedReq) {
 			Conversation = new GPTConversation(
-				req.user.unlimited_req,
+				unlimitedReq,
 				req.user.total_req_left,
-				req.user.first_name,
+				userName,
 				promptInput,
 				selectedFeature,
 				selectedLanguage,
@@ -34,6 +35,7 @@ export const textPrompt = async (req: any, res: Response): Promise<any> => {
 		} else {
 			Conversation = new GPTConversation(
 				unlimitedReq,
+				req.user.total_req_left,
 				userName,
 				promptInput,
 				selectedFeature,
@@ -55,9 +57,9 @@ export const textPrompt = async (req: any, res: Response): Promise<any> => {
 			case "transcribe":
 				let responseData = {
 					user: {
-						name: req.user.name,
+						name: userName,
 						apiRights: {
-							unlimitedReq: req.user.unlimitedReq,
+							unlimitedReq: unlimitedReq,
 							totalReqLeft: req.user.total_req_left
 								? req.user.total_req_left
 								: 0,
