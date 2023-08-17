@@ -68,7 +68,7 @@ export const VoiceProvider: React.FC<{ children: React.ReactNode }> = ({
 
 					try {
 						await axios
-							.post("/api/upload", formData)
+							.post("/api/prompt-voice", formData)
 							.then((res) => {
 								if (res.status === 200) {
 									const { user } = res.data;
@@ -133,8 +133,9 @@ export const VoiceProvider: React.FC<{ children: React.ReactNode }> = ({
 		setIsWaiting(true);
 		try {
 			await axios
-				.post("/api/prompt", formData)
+				.post("/api/prompt-text", formData)
 				.then((res) => {
+					console.log(res);
 					if (res.status === 200) {
 						const { user } = res.data;
 						setCurrentUser({

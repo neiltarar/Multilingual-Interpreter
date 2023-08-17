@@ -1,11 +1,11 @@
 // Set env variables
 import dotenv from "dotenv";
-dotenv.config({ path: './src/.env' });
+dotenv.config({ path: "./src/.env" });
 // Import libraries
 import express from "express";
 import userRoutes from "./routes/userRoutes";
 import sessionRoutes from "./routes/sessionRoutes";
-import voiceApiRoutes from "./routes/voiceApiRoutes";
+import promptApiRoutes from "./routes/promptApiRoutes";
 import path from "path";
 import cors from "cors";
 import cookieParser from "cookie-parser";
@@ -14,7 +14,7 @@ import { rateLimit } from "express-rate-limit";
 
 const app = express();
 // This tells Express that it's behind a proxy, and that it should trust the X-Forwarded-For header
-app.set('trust proxy', 1);
+app.set("trust proxy", 1);
 const PORT = process.env.AUTH_API_PORT || 3001;
 const isProduction = process.env.NODE_ENV === "production";
 const appLimiter = rateLimit({
@@ -23,9 +23,11 @@ const appLimiter = rateLimit({
 	standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
 	legacyHeaders: false, // Disable the `X-RateLimit-*` headers
 });
-console.log(process.env.NODE_ENV)
+console.log(process.env.NODE_ENV);
 isProduction
-	? app.use(cors({ origin: "https://gpt-helper.duckdns.org", credentials: true }))
+	? app.use(
+			cors({ origin: "https://gpt-helper.duckdns.org", credentials: true })
+	  )
 	: app.use(cors({ origin: "http://localhost:3000", credentials: true }));
 
 isProduction
@@ -38,7 +40,7 @@ app.use(express.static(path.join(__dirname, "build")));
 
 app.use("/users", userRoutes);
 app.use("/sessions", sessionRoutes);
-app.use("/api", authenticateToken, voiceApiRoutes);
+app.use("/api", authenticateToken, promptApiRoutes);
 app.use((req, res) => {
 	res.sendFile(path.join(__dirname, "build", "index.html"));
 });

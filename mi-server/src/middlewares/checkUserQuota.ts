@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from "express";
+import { GPTConversation } from "../services/GPTService";
 import { userModels } from "../models/userModel";
 
 export const checkUserQuota = async (
@@ -12,15 +13,20 @@ export const checkUserQuota = async (
 	if (!foundUser) {
 		return res.status(404).send({ message: "User not found" });
 	}
-	const { unlimited_req: unlimitedReq, total_req_left: totalReqLeft } =
-		foundUser;
 
-	if (!unlimitedReq && totalReqLeft <= 0) {
-		return res.status(429).send({
-			apiStatus: false,
-			message:
-				"You have used up all your requests. Please upgrade your plan or wait until your quota is renewed.",
-		});
+	const {
+		first_name: userName,
+		unlimited_req: unlimitedReq,
+		total_req_left: totalReqLeft,
+	} = foundUser;
+	if (!unlimitedReq && totalReqLeft < 1) {
+		const Conversation = new GPTConversation(
+			unlimitedReq,
+			totalReqLeft,
+			userName
+		);
+		const responseData = Conversation.sendNoApiTokenMessage();
+		return res.status(429).send(responseData);
 	} else if (!unlimitedReq && totalReqLeft > 0) {
 		try {
 			const userWithNewApiReqRights = await userModels.apiRequestDeduction(
@@ -28,11 +34,13 @@ export const checkUserQuota = async (
 			);
 
 			if (!userWithNewApiReqRights) {
-				return res.status(429).send({
-					apiStatus: false,
-					message:
-						"You have used up all your requests. Please upgrade your plan or wait until your quota is renewed.",
-				});
+				const Conversation = new GPTConversation(
+					unlimitedReq,
+					totalReqLeft,
+					userName
+				);
+				const responseData = Conversation.sendNoApiTokenMessage();
+				return res.status(429).send(responseData);
 			}
 
 			//@ts-ignore
