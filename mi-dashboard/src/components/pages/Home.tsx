@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Typography, Box } from "@mui/material";
-import { useVoice } from "../../contexts/VoiceContext";
+import { useVoice } from "../../contexts/PromptContext";
 import { useAuth } from "../../contexts/AuthContext";
 import DefaultLayout from "../Layout/DefaultLayout";
 import SliderBar from "../Layout/SliderBar";
@@ -13,7 +13,7 @@ import "../../App.css";
 
 interface Conversation {
   topic: string;
-  conversationId: number;
+  conversation_id: number;
 }
 interface User {
   user: {

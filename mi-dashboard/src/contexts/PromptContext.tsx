@@ -26,10 +26,10 @@ interface AuthContextType {
   signout: () => void;
 }
 
-const VoiceContext = createContext<VoiceContextType | undefined>(undefined);
+const PromptContext = createContext<VoiceContextType | undefined>(undefined);
 
 export const useVoice = () => {
-  return useContext(VoiceContext);
+  return useContext(PromptContext);
 };
 
 export const VoiceProvider: React.FC<{ children: React.ReactNode }> = ({
@@ -188,6 +188,6 @@ export const VoiceProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   return (
-    <VoiceContext.Provider value={value}>{children}</VoiceContext.Provider>
+    <PromptContext.Provider value={value}>{children}</PromptContext.Provider>
   );
 };

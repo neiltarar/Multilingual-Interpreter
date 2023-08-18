@@ -7,7 +7,7 @@ import Navbar from "./NavBar";
 
 interface Conversation {
   topic: string;
-  conversationId: number;
+  conversation_id: number;
 }
 
 interface DefaultLayoutProps {

@@ -10,10 +10,11 @@ import {
 import MenuIcon from "@mui/icons-material/Menu";
 import AddIcon from "@mui/icons-material/Add";
 import LogoutButton from "../Auth/LogoutButton";
+import * as events from "events";
 
 interface Conversation {
   topic: string;
-  conversationId: number;
+  conversation_id: number;
 }
 
 interface NavbarProps {
@@ -31,7 +32,9 @@ const Navbar: React.FC<NavbarProps> = ({
     setAnchorEl(event.currentTarget);
   };
 
-  const handleClose = () => {
+  const handleClose = (e: React.MouseEvent<HTMLElement>) => {
+    const conversationId: string = e.currentTarget.id;
+    console.log(conversationId);
     setAnchorEl(null);
   };
 
@@ -63,11 +66,16 @@ const Navbar: React.FC<NavbarProps> = ({
           onClose={handleClose}
         >
           <LogoutButton />
-          {usersConversations.map((conversation, index) => (
-            <MenuItem key={index} onClick={handleClose}>
-              {conversation.topic}
-            </MenuItem>
-          ))}
+          {usersConversations &&
+            usersConversations.map((conversation, index) => (
+              <MenuItem
+                key={index}
+                onClick={handleClose}
+                id={conversation.conversation_id.toString()}
+              >
+                {conversation.topic}
+              </MenuItem>
+            ))}
         </Menu>
         <Button
           startIcon={<AddIcon />}
