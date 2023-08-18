@@ -11,9 +11,14 @@ import GPTResponseText from "../Layout/GPTResponseText";
 import soundWaveGif from "../../assets/waves.gif";
 import "../../App.css";
 
+interface Conversation {
+  topic: string;
+  conversationId: number;
+}
 interface User {
   user: {
     name: string;
+    usersConversations: Conversation[];
     apiRights: {
       totalReqLeft: number;
       unlimitedReq: boolean;
@@ -68,7 +73,7 @@ const Home: React.FC = () => {
   }, [currentUser, navigate]);
 
   return (
-    <DefaultLayout>
+    <DefaultLayout currentUser={currentUser}>
       <Typography
         variant="body1"
         sx={{

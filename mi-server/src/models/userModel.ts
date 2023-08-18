@@ -44,7 +44,8 @@ export const userModels = {
   findUserByEmail: async (email: string): Promise<User | null> => {
     try {
       const result: any[] | undefined = await db(
-        "SELECT * FROM users WHERE email=$1",
+        `SELECT * FROM users 
+                 WHERE email=$1`,
         [email],
       );
 
@@ -62,11 +63,33 @@ export const userModels = {
   findUserById: async (id: number): Promise<User | null> => {
     try {
       const result: any[] | undefined = await db(
-        "SELECT first_name, unlimited_req, total_req_left FROM users WHERE id=$1",
+        `SELECT first_name, unlimited_req, total_req_left FROM users 
+                 WHERE id=$1`,
         [id],
       );
       if (result && result.length > 0) {
         return result[0];
+      } else {
+        return null;
+      }
+    } catch (error) {
+      console.error(`Error fetching user by id ${id}:`, error);
+      throw new Error("Database error when fetching user");
+    }
+  },
+
+  findUserConversationByUserId: async (id: number): Promise<any | null> => {
+    try {
+      const result: any[] | undefined = await db(
+        `SELECT conversations.topic, conversations.id as conversation_id 
+                  FROM users 
+                  INNER JOIN conversations ON users.id = conversations.user_id 
+                  WHERE users.id=$1 
+                  ORDER BY conversations.created_at DESC`,
+        [id],
+      );
+      if (result && result.length > 0) {
+        return result;
       } else {
         return null;
       }
