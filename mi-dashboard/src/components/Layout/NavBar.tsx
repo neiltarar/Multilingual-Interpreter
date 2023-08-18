@@ -30,7 +30,12 @@ const Navbar: React.FC<NavbarProps> = ({ onNewConversation }) => {
 		<AppBar
 			position='static'
 			color='default'
-			sx={{ width: "100vw", minWidth: "390px" }}
+			sx={{
+				width: "100vw",
+				minWidth: "390px",
+				borderRadius: 0,
+				boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.5)", // Adding a subtle shadow
+			}}
 		>
 			<Toolbar>
 				<IconButton
