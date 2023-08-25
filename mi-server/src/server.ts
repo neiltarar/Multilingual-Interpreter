@@ -8,7 +8,7 @@ import rateLimit from "express-rate-limit";
 import { container } from "tsyringe";
 import { UserController } from "./controllers/userController";
 import { SessionController } from "./controllers/sessionController";
-// import { PromptApiController } from "./controllers/promptApiController";
+import { PromptApiController } from "./controllers/promptApiController";
 
 dotenv.config();
 const app = express();
@@ -45,13 +45,13 @@ app.use(express.static(path.join(__dirname, "build")));
 const userController = container.resolve<UserController>(UserController);
 const sessionController =
   container.resolve<SessionController>(SessionController);
-// const promptApiController =
-//   container.resolve<PromptApiController>(PromptApiController);
+const promptApiControllerInstance =
+  container.resolve<PromptApiController>(PromptApiController);
 
 // Routes
 app.use("/users", userController.routes());
 app.use("/sessions", sessionController.routes());
-// app.use("/api", promptApiController.routes());
+app.use("/api", promptApiControllerInstance.routes());
 
 app.use((req, res) => {
   res.sendFile(path.join(__dirname, "build", "index.html"));

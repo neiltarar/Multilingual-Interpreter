@@ -11,6 +11,11 @@
 		"strict": false, // permit implicit types (for now),
 		"lib": ["es2020"]
 	},
-	"include": ["src/**/*"],
-	"exclude": ["node_modules"]
+	"include": [
+		"src/**/*",
+		"src/types/*"
+	],
+	"exclude": [
+		"node_modules"
+	]
 }

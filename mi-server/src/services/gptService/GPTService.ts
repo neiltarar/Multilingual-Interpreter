@@ -1,6 +1,6 @@
 import axios from "axios";
-import { conversationModels } from "../models/conversationsModel";
-import { userModels } from "../models/userModel";
+import { conversationModels } from "../../models/conversationsModel";
+import { userModels } from "../../models/userModel";
 
 const CHAT_GPT_API_KEY = process.env.CHAT_GPT_API_KEY;
 
@@ -9,7 +9,7 @@ if (!CHAT_GPT_API_KEY) {
   throw new Error("CHAT_GPT_API_KEY environment variable not set!");
 }
 
-export class GPTConversation {
+export class GPTService {
   // Define types for class properties
   isUnlimitedRequest: boolean;
   totalApiRequestsLeft: number;

@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { GPTConversation } from "../services/GPTService";
+import { GPTService } from "../services/gptService/GPTService";
 import { userModels } from "../models/userModel";
 
 export const checkUserQuota = async (
@@ -21,11 +21,7 @@ export const checkUserQuota = async (
     total_req_left: totalReqLeft,
   } = foundUser;
   if (!unlimitedReq && totalReqLeft < 1) {
-    const Conversation = new GPTConversation(
-      unlimitedReq,
-      totalReqLeft,
-      userName,
-    );
+    const Conversation = new GPTService(unlimitedReq, totalReqLeft, userName);
     const responseData = Conversation.sendNoApiTokenMessage();
     return res.status(429).send(responseData);
   } else if (!unlimitedReq && totalReqLeft > 0) {
@@ -34,7 +30,7 @@ export const checkUserQuota = async (
         await userModels.apiRequestDeduction(userId);
 
       if (!userWithNewApiReqRights) {
-        const Conversation = new GPTConversation(
+        const Conversation = new GPTService(
           unlimitedReq,
           totalReqLeft,
           userName,
