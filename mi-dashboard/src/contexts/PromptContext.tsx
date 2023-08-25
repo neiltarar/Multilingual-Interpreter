@@ -149,6 +149,7 @@ export const VoiceProvider: React.FC<{ children: React.ReactNode }> = ({
               user: {
                 name: user.name,
                 apiRights: user.apiRights,
+                usersConversations: user.usersConversations,
               },
             });
             localStorage.setItem(
@@ -157,6 +158,7 @@ export const VoiceProvider: React.FC<{ children: React.ReactNode }> = ({
                 user: {
                   name: user.name,
                   apiRights: user.apiRights,
+                  usersConversations: user.usersConversations,
                 },
               }),
             );

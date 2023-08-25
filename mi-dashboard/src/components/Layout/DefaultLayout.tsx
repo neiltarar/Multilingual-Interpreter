@@ -4,18 +4,14 @@ import { Box, Typography } from "@mui/material";
 import myTheme from "./myTheme";
 import Footer from "./Footer";
 import Navbar from "./NavBar";
-
-interface Conversation {
-  topic: string;
-  conversation_id: number;
-}
+import { Conversation } from "../../types/conversation";
 
 interface DefaultLayoutProps {
   children: ReactNode;
   currentUser: {
     user: {
       name: string;
-      usersConversations: Conversation[];
+      userConversations: Conversation[];
       apiRights: {
         totalReqLeft: number;
         unlimitedReq: boolean;
@@ -31,11 +27,7 @@ const DefaultLayout: React.FC<DefaultLayoutProps> = ({
   const handleNewConversation = () => {
     // logic to start a new conversation
   };
-
-  const { usersConversations } = currentUser?.user || {
-    usersConversations: [],
-  };
-
+  const userConversations = currentUser?.user.userConversations || [];
   return (
     <ThemeProvider theme={myTheme}>
       <Box
@@ -49,7 +41,7 @@ const DefaultLayout: React.FC<DefaultLayoutProps> = ({
       >
         <Navbar
           onNewConversation={handleNewConversation}
-          usersConversations={usersConversations}
+          userConversations={userConversations}
         />
         <Box
           className="main-page"

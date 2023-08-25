@@ -10,31 +10,37 @@ import {
 import MenuIcon from "@mui/icons-material/Menu";
 import AddIcon from "@mui/icons-material/Add";
 import LogoutButton from "../Auth/LogoutButton";
-import * as events from "events";
-
-interface Conversation {
-  topic: string;
-  conversation_id: number;
-}
+import { useUsersConversations } from "../../contexts/UsersConversationsContext";
+import { AxiosResponse } from "axios";
+import { Conversation } from "../../types/conversation";
 
 interface NavbarProps {
   onNewConversation: () => void;
-  usersConversations: Conversation[];
+  userConversations: Conversation[];
+}
+
+interface UsersConversationsContextType {
+  handleGetAllConversations: (conversationId: number) => Promise<AxiosResponse>;
 }
 
 const Navbar: React.FC<NavbarProps> = ({
   onNewConversation,
-  usersConversations,
+  userConversations,
 }) => {
+  console.log("Navbar usersConversations", userConversations);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-
+  const { handleGetAllConversations } =
+    useUsersConversations() as UsersConversationsContextType;
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };
 
   const handleClose = (e: React.MouseEvent<HTMLElement>) => {
     const conversationId: string = e.currentTarget.id;
-    console.log(conversationId);
+    if (conversationId) {
+      console.log(conversationId);
+      handleGetAllConversations(parseInt(conversationId));
+    }
     setAnchorEl(null);
   };
 
@@ -66,12 +72,12 @@ const Navbar: React.FC<NavbarProps> = ({
           onClose={handleClose}
         >
           <LogoutButton />
-          {usersConversations &&
-            usersConversations.map((conversation, index) => (
+          {userConversations &&
+            userConversations.map((conversation, index) => (
               <MenuItem
                 key={index}
                 onClick={handleClose}
-                id={conversation.conversation_id.toString()}
+                id={conversation.id.toString()}
               >
                 {conversation.topic}
               </MenuItem>

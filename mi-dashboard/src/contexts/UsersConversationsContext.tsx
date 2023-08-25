@@ -5,6 +5,7 @@ interface Conversation {
   topic: string;
   conversation_id: number;
 }
+
 interface UsersConversationsContextType {}
 
 const UsersConversationsContext = createContext<
@@ -21,6 +22,23 @@ export const UsersConversationsProvider: React.FC<{
   const [usersConversations, setUsersConversations] = useState<Conversation[]>(
     [],
   );
+
+  const handleGetAllConversations = async (conversationId: number) => {
+    try {
+      console.log("hit it");
+      const response = await axios.get(`/api/conversations`, {
+        withCredentials: true,
+      });
+      console.log("response", response);
+      if (response.status === 200) {
+        setUsersConversations(response.data.conversations);
+      }
+      return response;
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  };
 
   const handleNewConversation = async (topic: string) => {
     try {
@@ -88,6 +106,7 @@ export const UsersConversationsProvider: React.FC<{
     <UsersConversationsContext.Provider
       value={{
         usersConversations,
+        handleGetAllConversations,
         handleNewConversation,
         handleDeleteConversation,
         handleRenameConversation,

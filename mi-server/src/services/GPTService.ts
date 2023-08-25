@@ -1,5 +1,6 @@
 import axios from "axios";
 import { conversationModels } from "../models/conversationsModel";
+import { userModels } from "../models/userModel";
 
 const CHAT_GPT_API_KEY = process.env.CHAT_GPT_API_KEY;
 
@@ -107,11 +108,18 @@ export class GPTConversation {
     };
   }
 
-  #setResponseObject() {
+  async #setResponseObject() {
+    //@ts-ignore
+    const userConversationHistory =
+      await userModels.findUserConversationByUserId(
+        //@ts-ignore
+        this.userId,
+      );
     if (this.isUnlimitedRequest) {
       return {
         user: {
           name: this.userName,
+          usersConversations: userConversationHistory,
           apiRights: {
             unlimitedReq: this.isUnlimitedRequest,
             totalReqLeft: this.totalApiRequestsLeft,
@@ -123,6 +131,7 @@ export class GPTConversation {
       return {
         user: {
           name: this.userName,
+          usersConversations: userConversationHistory,
           apiRights: {
             unlimitedReq: this.isUnlimitedRequest,
             totalReqLeft: this.totalApiRequestsLeft,
@@ -183,6 +192,8 @@ export class GPTConversation {
       }
     }
   }
+
+  // TODO: implement if not first request
 
   async imageGenerator(): Promise<string | any> {
     try {

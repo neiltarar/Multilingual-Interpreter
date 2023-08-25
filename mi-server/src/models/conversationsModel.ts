@@ -14,6 +14,21 @@ interface addMessagetoConversationProps {
 }
 
 export const conversationModels = {
+  findConversationMessagesByConversationId: async (
+    conversation_id: number,
+  ): Promise<any> => {
+    try {
+      const result: any[] | undefined = await db(
+        "SELECT * FROM messages WHERE conversation_id = $1",
+        [conversation_id],
+      );
+      return result;
+    } catch (error: any) {
+      console.error("Error fetching conversation messages:", error);
+      throw new Error("Database error when fetching conversation messages");
+    }
+  },
+
   createNewConversation: async ({
     user_id,
     topic,

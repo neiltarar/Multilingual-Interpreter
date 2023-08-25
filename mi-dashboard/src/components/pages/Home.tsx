@@ -9,16 +9,13 @@ import FormControls from "../Layout/FormControls";
 import PromptInput from "../Layout/PromptInput";
 import GPTResponseText from "../Layout/GPTResponseText";
 import soundWaveGif from "../../assets/waves.gif";
+import { Conversation } from "../../types/conversation";
 import "../../App.css";
 
-interface Conversation {
-  topic: string;
-  conversation_id: number;
-}
 interface User {
   user: {
     name: string;
-    usersConversations: Conversation[];
+    userConversations: Conversation[];
     apiRights: {
       totalReqLeft: number;
       unlimitedReq: boolean;
@@ -27,7 +24,7 @@ interface User {
 }
 
 interface AuthContextType {
-  currentUser: User | null;
+  currentUser: User;
 }
 
 interface VoiceContextType {

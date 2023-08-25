@@ -1,5 +1,6 @@
 import express from "express";
-import { signin, signout } from "../controllers/sessionsController";
+import { signin, signout } from "../controllers/sessionController";
+
 const router = express.Router();
 
 router.post("/signin", signin);
