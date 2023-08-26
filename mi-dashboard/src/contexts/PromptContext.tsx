@@ -32,9 +32,9 @@ export const useVoice = () => {
   return useContext(PromptContext);
 };
 
-export const VoiceProvider: React.FC<{ children: React.ReactNode }> = ({
-  children,
-}) => {
+export const VoiceProvider: React.FC<{
+  children: React.ReactNode;
+}> = ({ children }) => {
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const [GPTResponse, setGPTResponse] = useState(null);
   const [isRecording, setIsRecording] = useState(false);
@@ -145,11 +145,12 @@ export const VoiceProvider: React.FC<{ children: React.ReactNode }> = ({
         .then((res) => {
           if (res.status === 200) {
             const { user } = res.data;
+            console.log("user", user);
             setCurrentUser({
               user: {
                 name: user.name,
                 apiRights: user.apiRights,
-                usersConversations: user.usersConversations,
+                userConversations: user.userConversations,
               },
             });
             localStorage.setItem(
@@ -158,7 +159,7 @@ export const VoiceProvider: React.FC<{ children: React.ReactNode }> = ({
                 user: {
                   name: user.name,
                   apiRights: user.apiRights,
-                  usersConversations: user.usersConversations,
+                  userConversations: user.userConversations,
                 },
               }),
             );

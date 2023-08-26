@@ -26,8 +26,4 @@ export class AuthService {
 
     return user;
   }
-
-  async getUserConversations(userId: number) {
-    return this.conversationService?.getConversationsByUserId(userId);
-  }
 }

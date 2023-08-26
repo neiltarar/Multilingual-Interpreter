@@ -9,16 +9,19 @@ import {
 } from "../models/sessionModel";
 import { InternalServerError } from "../types/errors/500-errors";
 import { BadRequestError } from "../types/errors/400-errors";
+import { ConversationService } from "../services/conversation/conversation-service";
 
 @autoInjectable()
 export class SessionController {
   private readonly router: Router;
   private readonly authService: AuthService;
   private readonly tokenService: TokenService;
+  private readonly conversationService: ConversationService;
 
   constructor(authService: AuthService, tokenService: TokenService) {
     this.router = Router();
     this.authService = authService;
+    this.conversationService = new ConversationService();
     this.tokenService = tokenService;
     this.initializeRoutes();
   }
@@ -44,9 +47,8 @@ export class SessionController {
         );
       }
 
-      const userConversations = await this.authService.getUserConversations(
-        user.id,
-      );
+      const userConversations =
+        await this.conversationService.getConversationsByUserId(user.id);
 
       const payload = {
         userId: user.id,

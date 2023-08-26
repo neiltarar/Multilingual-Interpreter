@@ -10,7 +10,7 @@ import {
 import MenuIcon from "@mui/icons-material/Menu";
 import AddIcon from "@mui/icons-material/Add";
 import LogoutButton from "../Auth/LogoutButton";
-import { useUsersConversations } from "../../contexts/UsersConversationsContext";
+import { useUserConversations } from "../../contexts/UserConversationsContext";
 import { AxiosResponse } from "axios";
 import { Conversation } from "../../types/conversation";
 
@@ -19,7 +19,7 @@ interface NavbarProps {
   userConversations: Conversation[];
 }
 
-interface UsersConversationsContextType {
+interface UserConversationsContextType {
   handleGetAllConversations: (conversationId: number) => Promise<AxiosResponse>;
 }
 
@@ -27,10 +27,9 @@ const Navbar: React.FC<NavbarProps> = ({
   onNewConversation,
   userConversations,
 }) => {
-  console.log("Navbar usersConversations", userConversations);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const { handleGetAllConversations } =
-    useUsersConversations() as UsersConversationsContextType;
+    useUserConversations() as UserConversationsContextType;
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -43,7 +42,7 @@ const Navbar: React.FC<NavbarProps> = ({
     }
     setAnchorEl(null);
   };
-
+  console.log("userconversations: ", userConversations);
   return (
     <AppBar
       position="static"

@@ -1,6 +1,7 @@
 import axios from "axios";
 import { conversationModels } from "../../models/conversationsModel";
 import { userModels } from "../../models/userModel";
+import { ConversationService } from "../conversation/conversation-service";
 
 const CHAT_GPT_API_KEY = process.env.CHAT_GPT_API_KEY;
 
@@ -25,6 +26,7 @@ export class GPTService {
   gptHelperData: () => {};
   imageGeneratorData: Record<string, any>;
   isFirstRequest: boolean;
+  conversationService: ConversationService;
 
   constructor(
     isUnlimitedRequest: boolean = false,
@@ -47,6 +49,7 @@ export class GPTService {
     this.targetLanguage = targetLanguage;
     this.gptResponse = "";
     this.isFirstRequest = isFirstRequest;
+    this.conversationService = new ConversationService();
 
     this.header = {
       "Content-Type": "application/json",
@@ -111,15 +114,12 @@ export class GPTService {
   async #setResponseObject() {
     //@ts-ignore
     const userConversationHistory =
-      await userModels.findUserConversationByUserId(
-        //@ts-ignore
-        this.userId,
-      );
+      await this.conversationService.getConversationsByUserId(this.userId);
     if (this.isUnlimitedRequest) {
       return {
         user: {
           name: this.userName,
-          usersConversations: userConversationHistory,
+          userConversations: userConversationHistory,
           apiRights: {
             unlimitedReq: this.isUnlimitedRequest,
             totalReqLeft: this.totalApiRequestsLeft,

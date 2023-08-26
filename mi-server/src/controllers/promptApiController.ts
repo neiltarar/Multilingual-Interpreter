@@ -6,6 +6,7 @@ import multer from "multer";
 import { checkUserQuota } from "../middlewares/checkUserQuota";
 import { authMiddleware } from "../middlewares/authMiddleware";
 import { CustomRequest } from "../types/dto/auth-types";
+import { ConversationService } from "../services/conversation/conversation-service";
 
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
@@ -14,10 +15,15 @@ const upload = multer({ storage: storage });
 export class PromptApiController {
   private readonly router: Router;
   private readonly gptService: GPTService;
+  private readonly conversationService: ConversationService;
 
-  constructor(gptService: GPTService) {
+  constructor(
+    gptService: GPTService,
+    conversationService: ConversationService,
+  ) {
     this.router = Router();
     this.gptService = gptService;
+    this.conversationService = new ConversationService();
     this.initializeRoutes();
   }
 

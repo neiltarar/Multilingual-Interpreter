@@ -5,13 +5,13 @@ import SignIn from "./components/Auth/SignIn";
 import SignUp from "./components/Auth/SignUp";
 import { AuthProvider } from "./contexts/AuthContext";
 import { VoiceProvider } from "./contexts/PromptContext";
-import { UsersConversationsProvider } from "./contexts/UsersConversationsContext";
+import { UserConversationsProvider } from "./contexts/UserConversationsContext";
 import "./App.css";
 
 const App: React.FC = () => {
   return (
     <AuthProvider>
-      <UsersConversationsProvider>
+      <UserConversationsProvider>
         <VoiceProvider>
           <Routes>
             <Route path="/signin" element={<SignIn />} />
@@ -19,7 +19,7 @@ const App: React.FC = () => {
             <Route path="/" element={<Home />} />
           </Routes>
         </VoiceProvider>
-      </UsersConversationsProvider>
+      </UserConversationsProvider>
     </AuthProvider>
   );
 };
