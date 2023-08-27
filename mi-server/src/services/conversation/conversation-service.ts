@@ -15,4 +15,17 @@ export class ConversationService {
       throw new Error("Database error when fetching user conversations");
     }
   }
+
+  async getMessagesByConversationId(conversationId: number) {
+    try {
+      const messages = await db(
+        "SELECT * FROM messages WHERE conversation_id = $1",
+        [conversationId],
+      );
+      return messages;
+    } catch (error) {
+      console.error("Error fetching conversation messages:", error);
+      throw new Error("Database error when fetching conversation messages");
+    }
+  }
 }

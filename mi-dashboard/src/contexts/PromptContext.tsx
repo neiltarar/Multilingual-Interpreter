@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useRef } from "react";
 import { useAuth } from "./AuthContext";
+import { useUserConversations } from "./UserConversationsContext";
 import axios, { AxiosResponse } from "axios";
 
 interface VoiceContextType {
@@ -32,7 +33,7 @@ export const useVoice = () => {
   return useContext(PromptContext);
 };
 
-export const VoiceProvider: React.FC<{
+export const GPTPromptProvider: React.FC<{
   children: React.ReactNode;
 }> = ({ children }) => {
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
@@ -40,7 +41,14 @@ export const VoiceProvider: React.FC<{
   const [isRecording, setIsRecording] = useState(false);
   const [isWaiting, setIsWaiting] = useState(false);
   const { currentUser, setCurrentUser, signout } = useAuth() as AuthContextType;
+  const conversationMessages = useUserConversations()?.conversationMessages;
+  const conversationId = useUserConversations()?.conversationId;
+  const isFirstRequest = !(
+    conversationMessages && conversationMessages.length > 0
+  );
 
+  console.log("prompt text context", conversationId);
+  console.log("prompt text context", conversationMessages);
   const handleButtonPress = async (
     selectedLanguage: string,
     selectedLanguage2: string,
@@ -69,6 +77,11 @@ export const VoiceProvider: React.FC<{
           formData.append(
             "selectedTranscriptionSpeed",
             selectedTranscriptionSpeed,
+          );
+          formData.append("isFirstRequest", isFirstRequest.toString());
+          formData.append(
+            "conversationId",
+            conversationId ? conversationId.toString() : "",
           );
           setIsWaiting(true);
 
@@ -138,14 +151,20 @@ export const VoiceProvider: React.FC<{
     formData.append("selectedFeature", selectedFeature);
     formData.append("promptInput", promptInput);
     formData.append("gptResponse", gptResponse as string);
+    formData.append("isFirstRequest", isFirstRequest.toString());
+    formData.append(
+      "conversationId",
+      conversationId ? conversationId.toString() : "",
+    );
     setIsWaiting(true);
+
+    console.log(formData);
     try {
       await axios
         .post("/api/prompt-text", formData)
         .then((res) => {
           if (res.status === 200) {
             const { user } = res.data;
-            console.log("user", user);
             setCurrentUser({
               user: {
                 name: user.name,

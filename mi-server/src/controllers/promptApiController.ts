@@ -28,7 +28,10 @@ export class PromptApiController {
   }
 
   private initializeRoutes() {
-    this.router.get("/conversations", this.conversations.bind(this));
+    this.router.get(
+      "/conversations/:conversationId",
+      this.conversationsById.bind(this),
+    );
     this.router.post(
       "/prompt-voice",
       authMiddleware.authenticateToken as any,
@@ -49,9 +52,14 @@ export class PromptApiController {
     return this.router;
   }
 
-  private async conversations(req: Request, res: Response) {
+  private async conversationsById(req: Request, res: Response) {
     try {
-      // Implement the functionality for conversations
+      const { conversationId } = req.params;
+      const conversation =
+        await this.conversationService.getMessagesByConversationId(
+          parseInt(conversationId, 10),
+        );
+      res.json({ conversationMessages: conversation });
     } catch (e) {
       res.status(500).json({ message: "Internal server error" });
     }
@@ -83,6 +91,8 @@ export class PromptApiController {
         selectedLanguage2,
         selectedFeature,
         promptInput,
+        isFirstRequest,
+        conversationId,
       } = req.body;
 
       const { name: userName, userId, unlimitedReq } = req.user;
@@ -97,6 +107,8 @@ export class PromptApiController {
           selectedFeature,
           selectedLanguage,
           selectedLanguage2,
+          isFirstRequest,
+          conversationId,
         );
       } else {
         Conversation = new GPTService(
@@ -108,6 +120,8 @@ export class PromptApiController {
           selectedFeature,
           selectedLanguage,
           selectedLanguage2,
+          isFirstRequest,
+          conversationId,
         );
       }
 

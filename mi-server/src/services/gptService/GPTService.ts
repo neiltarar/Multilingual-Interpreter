@@ -2,6 +2,8 @@ import axios from "axios";
 import { conversationModels } from "../../models/conversationsModel";
 import { userModels } from "../../models/userModel";
 import { ConversationService } from "../conversation/conversation-service";
+import { NotFoundError } from "../../types/errors/400-errors";
+import { transformHistoryForGPT } from "../../utils/transformHistoryForGPT";
 
 const CHAT_GPT_API_KEY = process.env.CHAT_GPT_API_KEY;
 
@@ -23,9 +25,10 @@ export class GPTService {
   gptResponse: string;
   header: Record<string, string>;
   gptTranslateData: Record<string, any>;
-  gptHelperData: () => {};
+  gptHelperData: (messages?) => {};
   imageGeneratorData: Record<string, any>;
   isFirstRequest: boolean;
+  conversationId: number | null;
   conversationService: ConversationService;
 
   constructor(
@@ -37,7 +40,8 @@ export class GPTService {
     feature: string = "gpthelper",
     sourceLanguage: string = "english",
     targetLanguage: string = "turkish",
-    isFirstRequest: boolean = true,
+    isFirstRequest: string = "true",
+    conversationId: number | null = null,
   ) {
     this.isUnlimitedRequest = isUnlimitedRequest;
     this.totalApiRequestsLeft = totalApiRequestsLeft;
@@ -48,7 +52,8 @@ export class GPTService {
     this.sourceLanguage = sourceLanguage;
     this.targetLanguage = targetLanguage;
     this.gptResponse = "";
-    this.isFirstRequest = isFirstRequest;
+    this.isFirstRequest = isFirstRequest === "true" ? true : false;
+    this.conversationId = conversationId;
     this.conversationService = new ConversationService();
 
     this.header = {
@@ -88,14 +93,7 @@ export class GPTService {
     ) => {
       return {
         model: "gpt-4",
-        messages: [
-          {
-            role: "system",
-            content:
-              "You are a helpful assistant, who is polite and asks for further information when needed to help better.",
-          },
-          { role: "user", content: `${this.promptText}` },
-        ],
+        messages: messages,
         temperature: 0.3,
         max_tokens: 2000,
         top_p: 1.0,
@@ -190,10 +188,46 @@ export class GPTService {
         console.error("Error:", error);
         throw new Error("An error occurred; contact the admin");
       }
+    } else if (this.userId) {
+      if (this.conversationId) {
+        const conversationIdNum = parseInt(this.conversationId.toString(), 10);
+        const conversationMessages =
+          await this.conversationService.getMessagesByConversationId(
+            conversationIdNum,
+          );
+
+        const messages = transformHistoryForGPT(
+          conversationMessages,
+          this.promptText,
+        );
+
+        await conversationModels.addNewMessageToConversation({
+          conversation_id: conversationIdNum,
+          role: "user",
+          content: this.promptText,
+        });
+        const response = await axios.post(
+          "https://api.openai.com/v1/chat/completions",
+          this.gptHelperData(messages),
+          { headers: this.header },
+        );
+
+        this.gptResponse = response.data.choices[0].message.content.trim();
+        await conversationModels.addNewMessageToConversation({
+          conversation_id: conversationIdNum,
+          role: "system",
+          content: this.gptResponse,
+        });
+
+        return this.#setResponseObject();
+      } else {
+        throw new NotFoundError(
+          "Conversation not found",
+          "Conversation id was faulty",
+        );
+      }
     }
   }
-
-  // TODO: implement if not first request
 
   async imageGenerator(): Promise<string | any> {
     try {

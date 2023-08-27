@@ -10,26 +10,22 @@ import {
 import MenuIcon from "@mui/icons-material/Menu";
 import AddIcon from "@mui/icons-material/Add";
 import LogoutButton from "../Auth/LogoutButton";
-import { useUserConversations } from "../../contexts/UserConversationsContext";
-import { AxiosResponse } from "axios";
 import { Conversation } from "../../types/conversation";
+import { useUserConversations } from "../../contexts/UserConversationsContext";
 
 interface NavbarProps {
   onNewConversation: () => void;
   userConversations: Conversation[];
 }
 
-interface UserConversationsContextType {
-  handleGetAllConversations: (conversationId: number) => Promise<AxiosResponse>;
-}
-
 const Navbar: React.FC<NavbarProps> = ({
   onNewConversation,
-  userConversations,
+  userConversations: userConversations,
 }) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const { handleGetAllConversations } =
-    useUserConversations() as UserConversationsContextType;
+  const userConversationsContext = useUserConversations();
+  const { handleGetAllConversationMessages } = useUserConversations() || {};
+
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -38,11 +34,11 @@ const Navbar: React.FC<NavbarProps> = ({
     const conversationId: string = e.currentTarget.id;
     if (conversationId) {
       console.log(conversationId);
-      handleGetAllConversations(parseInt(conversationId));
+      handleGetAllConversationMessages?.(parseInt(conversationId));
     }
     setAnchorEl(null);
   };
-  console.log("userconversations: ", userConversations);
+
   return (
     <AppBar
       position="static"
